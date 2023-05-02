@@ -1,6 +1,7 @@
 import React from "react"
-import DisplayJobs from "./clientJobs"
-import SpecificJob from "./specificJob"
+import AllJobs from "../components/allJobs"
+import { useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 
 export default function Main(props) {
     let left = props.sidebar ? "250px" : "auto"
@@ -17,74 +18,45 @@ export default function Main(props) {
     const styles = {
         marginLeft: left
     }
-    const [showJob, setShowJob] = React.useState(false)
+    const navigate = useNavigate() 
 
-    //Display 1 job
-    const [jobShortCode, setJShortCode] = React.useState("")
+    const [refreshJobs, setRefreshJobs] = React.useState(false)
 
-    function dispJob(jsc) {
-        setShowJob(true)
-        setJShortCode(jsc)
+    function refJobsOn() {
+        setRefreshJobs(true)
     }
 
-    function hideJob() {
-        setShowJob(false)
-        setJShortCode()
-        
+    function refJobsOff() {
+        setRefreshJobs(false)
     }
 
     //Get data that is not within the scope of React: Jobs from the SQLAlchemy Database
-    let jobNumber, message
+    const [jobNumber, setJobNumber] = React.useState()
+    let message
     React.useEffect(
         () => {
             fetch('/job/client/jobs', requestOptions)
                 .then(res => res.json())
                 .then(data => {
                     console.log(data)
+                    console.log(data.length)
+                    setJobNumber(data.length)
                     if (data.msg){
                         message = data.msg
                     }
                     setJobs(data)
-                    jobNumber = data.length
+                
                 })
                 .catch(err => console.log(err))
-            
-            if (message && message === "Token has expired"){
-                fetch('/user_auth/refresh', requestOptions)
-                    .then(res => res.json())
-                    .then(data => {
-                        console.log(data)
-                        setToken(data.access_token)
-                    })
-                    .catch(err => console.log(err))
+
+            if (refreshJobs === true) {
+                refJobsOff()
             }
-        }, [message]
-    )
-
-    // React.useEffect(
-    //     () => {
-    //         fetch('/job/client/jobs', requestOptions)
-    //             .then(res => res.json())
-    //             .then(data => {
-    //                 console.log(data)
-    //                 if (data.message){
-    //                     message = data.message
-    //                 }
-    //             })
-    //             .catch(err => console.log(err))
             
-    //         if (message && message === "Token has expired"){
-    //             fetch('/user_auth/refresh', requestOptions)
-    //                 .then(res => res.json())
-    //                 .then(data => {
-    //                     console.log(data)
-    //                     setToken(data.access_token)
-    //                 })
-    //                 .catch(err => console.log(err))
-    //         }
-    //     }, [message]
-    // )
-
+        }, [refreshJobs]
+    )
+    
+    console.log(jobNumber)
 
     return (
         <div>
@@ -92,32 +64,11 @@ export default function Main(props) {
                 jobNumber === 0 ?
                 <main className="empty-main" style={styles}>
                     <h2 className="empty-h2">You have not registered any job.</h2>
-                    <button className="empty-button">Register one now</button>
+                    <Link to="/client/create-job"><button className="empty-button" onClick={props.jobsOn}>Register one now</button></Link>
                 </main>
                 :
-                <div style={styles} >
-                {
-                    !showJob ?
-                    <div className="alljobs">
-                        <h2 className="component-heading">Your Jobs:</h2>
-                        {
-                            jobs.map((job) => {
-                                return(
-                                    <DisplayJobs name={job.job_name} description={job.job_description} handleClick={() => dispJob(job.job_short_code)} />
-                                )
-                            })
-                        }
-                    </div>
-                    :
-                    <SpecificJob handleClick={hideJob} jsc={jobShortCode} className="alljobs" />
-                }
-                </div>
-
+                <AllJobs jobs = {jobs} sidebar = {props.sidebar} user = {props.getUser} onRefresh = {refJobsOn}/>
             }
-        </div>
-
-
-        
+        </div>        
     )
-
 }

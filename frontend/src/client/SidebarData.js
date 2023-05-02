@@ -11,14 +11,13 @@ import * as SlIcons from "react-icons/sl"
 export const SidebarData = [
     {
         title: "My Jobs",
-        path: "/client/my-jobs",
         icon: <AiIcons.AiFillHome />,
         iconClosed: <RiIcons.RiArrowDownSFill />,
         iconOpened: <RiIcons.RiArrowUpSFill />,
         subnav : [
             {
                 title: "All Jobs",
-                path: "/client/my-jobs/all-jobs",
+                path: "/client/my-jobs",
                 icon: <IoIcons.IoIosPaper />
             },
             {
@@ -36,32 +35,34 @@ export const SidebarData = [
 
     {
         title: "Proposals",
-        path: "/client/proposals",
         icon: <GiIcons.GiPaintRoller />,
         iconClosed: <RiIcons.RiArrowDownSFill />,
         iconOpened: <RiIcons.RiArrowUpSFill />,
         subnav : [
             {
-                title: "Selected",
+                title: "All Proposals",
+                path: "/client/proposals",
+                icon: <IoIcons.IoIosPaper />
+            },
+            {
+                title: "Selected Proposals",
                 path: "/client/proposals/selected",
                 icon: <GrIcons.GrCheckboxSelected />
-            },
-
-            {
-                title: "All Proposals",
-                path: "/client/proposals/all",
-                icon: <IoIcons.IoIosPaper />
             }
         ]
     },
 
     {
         title: "Contracts",
-        path: "/client/contracts",
         icon: <FaIcons.FaFileSignature />,
         iconClosed: <RiIcons.RiArrowDownSFill />,
         iconOpened: <RiIcons.RiArrowUpSFill />,
         subnav : [
+            {
+                title: "All Contracts",
+                path: "/client/contracts",
+                icon: <IoIcons.IoIosPaper />
+            },
             {
                 title: "Signed Contracts",
                 path: "/client/contracts/signed",

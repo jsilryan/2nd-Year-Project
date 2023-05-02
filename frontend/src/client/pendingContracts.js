@@ -12,7 +12,6 @@ export default function PendingContracts(props) {
             <h2 className="empty-h2">You have 0 Pending Contracts.</h2>
         </main>
 
-        
     )
 
 }

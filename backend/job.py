@@ -27,6 +27,7 @@ job_model = job_ns.model(
         "job_completed" : fields.Boolean(),
         "max_proposals" : fields.Integer(),
         "rated" : fields.Boolean(),
+        "job_created_at" : fields.DateTime(),
         "client_id" : fields.Integer()
     }
 )
@@ -118,6 +119,12 @@ class Painter_Jobs_Details(Resource):
 
         job_proposals = []
 
+        painter_proposals = []
+
+        for x in range(0, len(proposals)):
+            if (current_painter.id == proposals[x].painter_id):
+                painter_proposals.append(proposals[x])
+
         # if proposals:
         for x in range(0, len(jobs)):
             individual_job_proposals = []
@@ -188,6 +195,7 @@ class Update_Job(Resource):
             response = make_response(jsonify({
                 "message" : f"Cannot edit a confirmed job."
             }))
+            return response
         data = request.get_json()
 
         start_date_str = data.get("start_date")
@@ -293,13 +301,8 @@ class Jobs_With_Proposals(Resource):
                     if client_jobs[x] not in jobs_with_props:
                         jobs_with_props.append(client_jobs[x])
 
-        if len(jobs_with_props) > 0:
-            return jobs_with_props
-        else:
-            response = make_response(jsonify({
-                "message" : "No proposals for any job yet."
-            }))
-            return response
+        
+        return jobs_with_props
 
         
 

@@ -15,6 +15,8 @@ class Painter:
     painter_created_at: time
 """
 
+
+
 class Gender(Enum):
     Male = "Male"
     Female = "Female"
@@ -121,8 +123,8 @@ class Job(db.Model):
     client_id = db.Column(db.Integer(), db.ForeignKey("client.id"))
     max_proposals = db.Column(db.Integer(), nullable = False)
     rated = db.Column(db.Boolean(), default=False, nullable=False)
-    # job_created_at = db.Column(db.DateTime(timezone=True),
-    #                        server_default=func.now())
+    job_created_at = db.Column(db.DateTime(timezone=True),
+                           server_default=func.now())
     proposals = db.relationship("Proposal", backref = "job",lazy = True)
     contracts = db.relationship("Contract", backref = "job",lazy = True)
 

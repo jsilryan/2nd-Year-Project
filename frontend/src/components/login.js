@@ -125,7 +125,7 @@ export default function Login(props) {
                         props.switchClient()
                         props.handleClick()
                     } else if (data.user === "Painter") {
-                        navigate("/painter/my-jobs")
+                        navigate("/painter/bid-jobs")
                         completeLogin()
                         props.switchPainter()
                         props.handleClick()

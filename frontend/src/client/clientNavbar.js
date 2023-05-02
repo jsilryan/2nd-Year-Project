@@ -18,7 +18,7 @@ export default function ClientNavbar(props) {
                     <h2>MaRangi</h2>
                 </div>
             </div>
-            <Link to="/client/create-job" className="check-jobs"><h4>Create a Job</h4></Link>
+            <Link to="/client/create-job" className="check-jobs" onClick={props.jobsOn}><h4>Create a Job</h4></Link>
         </nav>
     )
 }

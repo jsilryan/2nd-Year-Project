@@ -147,7 +147,6 @@ export default function PainterSignUp(props) {
             }
 
         )
-        
     }
 
     function completePSignup() {
@@ -199,7 +198,7 @@ export default function PainterSignUp(props) {
               const alerts = data.message
               alert(alerts)
               if (data.message == "Painter created successfully!") {
-                navigate("/painter/my-jobs")
+                navigate("/painter/bid-jobs")
                 completePSignup()
                 props.switchPainter()
                 props.handleClick()

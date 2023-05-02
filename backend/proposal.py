@@ -17,7 +17,9 @@ proposal_model = proposal_ns.model(
         "proposal_description" : fields.String(),
         "proposal_selection" : fields.Boolean(),
         "proposal_confirmed": fields.Boolean(),
-        "job_id" : fields.Integer()
+        "proposal_date" : fields.DateTime(),
+        "job_id" : fields.Integer(),
+        'job_short_code': fields.String()
     }
 )
 
@@ -222,8 +224,13 @@ class Modify_Proposal(Resource):
     def get(self, proposal_short_code):
         """Get details of a proposal via short code:"""
         proposal = Proposal.query.filter_by(proposal_short_code = proposal_short_code).first()
+        job_id = proposal.job_id
+        current_job = Job.query.get(job_id)
+
         if proposal:
-            return proposal
+            proposal_dict = proposal.__dict__
+            proposal_dict["job_short_code"] = current_job.job_short_code
+            return proposal_dict
         else:
             proposal = []
             return proposal
@@ -237,15 +244,21 @@ class Modify_Proposal(Resource):
                 "message" : f"No proposal with Short code {proposal_short_code}."
             }))
             return response
-        if delete_proposal.proposal_confirmed != True:
-            delete_proposal.delete()
-            response = make_response(jsonify({
-                "message" : f"Proposal {proposal_short_code} deleted."
-            }))
-            return response
+        if delete_proposal.proposal_selection != True:
+            if delete_proposal.proposal_confirmed != True:
+                delete_proposal.delete()
+                response = make_response(jsonify({
+                    "message" : f"Proposal {proposal_short_code} deleted."
+                }))
+                return response
+            else:
+                response = make_response(jsonify({
+                    "message" : f"Cannot delete a confirmed proposal."
+                }))
+                return response
         else:
             response = make_response(jsonify({
-                "message" : f"Cannot delete a confirmed proposal."
+                "message" : f"Cannot delete a selected proposal."
             }))
             return response
 

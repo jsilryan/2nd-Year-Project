@@ -5,6 +5,7 @@ import * as IoIcons from "react-icons/io"
 import * as RiIcons from "react-icons/ri"
 import * as SlIcons from "react-icons/sl"
 import * as GiIcons from "react-icons/gi"
+import * as GrIcons from "react-icons/gr"
 import * as FcIcons from "react-icons/fc"
 
 
@@ -18,14 +19,13 @@ export const PainterSidebarData = [
     },
     {
         title: "My Jobs",
-        path: "/painter/my-jobs",
         icon: <GiIcons.GiPaintRoller />,
         iconClosed: <RiIcons.RiArrowDownSFill />,
         iconOpened: <RiIcons.RiArrowUpSFill />,
         subnav : [
             {
                 title: "All Jobs",
-                path: "/painter/my-jobs/bidded",
+                path: "/painter/my-jobs",
                 icon: <IoIcons.IoIosPaper />
             },
             {
@@ -41,12 +41,36 @@ export const PainterSidebarData = [
         ]
     },
     {
+        title: "Proposals",
+        icon: <GiIcons.GiPaintRoller />,
+        iconClosed: <RiIcons.RiArrowDownSFill />,
+        iconOpened: <RiIcons.RiArrowUpSFill />,
+        subnav : [
+            {
+                title: "All Proposals",
+                path: "/painter/proposals",
+                icon: <IoIcons.IoIosPaper />
+            },
+            {
+                title: "Selected",
+                path: "/painter/proposals/selected",
+                icon: <GrIcons.GrCheckboxSelected />
+            }
+
+        ]
+    },
+    {
         title: "Contracts",
-        path: "/painter/contracts",
         icon: <FaIcons.FaFileSignature />,
         iconClosed: <RiIcons.RiArrowDownSFill />,
         iconOpened: <RiIcons.RiArrowUpSFill />,
         subnav : [
+            {
+                title: "All Contracts",
+                path: "/painter/contracts",
+                icon: <IoIcons.IoIosPaper />
+            },
+
             {
                 title: "Signed Contracts",
                 path: "/painter/contracts/signed",

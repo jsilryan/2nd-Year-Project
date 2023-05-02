@@ -1,5 +1,6 @@
 import React from "react";
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import * as AiIcons from "react-icons/ai"
 
 export default function CreateJob(props) {
     const [jobForm, setJobForm] = React.useState({
@@ -212,8 +213,11 @@ export default function CreateJob(props) {
     }
 
     return (
-        <div style = {styles1}>
-            <div className="createjob">
+        <div style = {styles1} className="job">
+                <div className="side">
+                    <Link to="/client/my-jobs"><AiIcons.AiOutlineClose className="close" onClick={props.jobsOff}/></Link>
+                </div>
+            <div className="form_display">
                 <form className="form" onSubmit={handleSubmit}>
                     <h2 className="form-title">Enter Job Details:</h2>
                     <input
