@@ -24,13 +24,8 @@ export const PainterSidebarData = [
         iconOpened: <RiIcons.RiArrowUpSFill />,
         subnav : [
             {
-                title: "All Jobs",
-                path: "/painter/my-jobs",
-                icon: <IoIcons.IoIosPaper />
-            },
-            {
-                title: "Confirmed Jobs",
-                path: "/painter/my-jobs/confirmed",
+                title: "Ongoing Jobs",
+                path: "/painter/my-jobs/ongoing",
                 icon: <GiIcons.GiConfirmed />
             },
             {
@@ -65,12 +60,6 @@ export const PainterSidebarData = [
         iconClosed: <RiIcons.RiArrowDownSFill />,
         iconOpened: <RiIcons.RiArrowUpSFill />,
         subnav : [
-            {
-                title: "All Contracts",
-                path: "/painter/contracts",
-                icon: <IoIcons.IoIosPaper />
-            },
-
             {
                 title: "Signed Contracts",
                 path: "/painter/contracts/signed",

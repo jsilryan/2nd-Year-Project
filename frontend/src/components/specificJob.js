@@ -4,6 +4,8 @@ import UpdateJob from "../client/updateJob"
 import DeleteJob from "../client/deleteJob"
 import { Link } from "react-router-dom"
 import CreateProposal from "../painter/createProposal"
+import CompleteJob from "../client/completeJob"
+import RatePainter from "../client/ratePainter"
 
 export default function SpecificJob(props) {
     const [job, setJob] = React.useState(null)
@@ -88,8 +90,83 @@ export default function SpecificJob(props) {
     function closeDelete() {
         setOnDelete(false)
     }
+    const [onComplete, setOnComplete] = React.useState(false)
 
-    const jobStyle = !onDelete ? "job" : "job-opaque"
+    function openComplete() {
+        setOnComplete(true)
+    }
+
+    function closeComplete() {
+        setOnComplete(false)
+    }
+
+    const jobStyle = !onDelete && !onComplete ? "job" : "job-opaque"
+
+    const [posted, setPosted] = React.useState()
+    const [postedUnit, setPostedUnit] = React.useState()
+    const now = new Date()
+    const endDate = new Date(job && job.end_date)
+    const createdMsDiff = Math.abs(endDate - now)
+    const createdSecDiff = Math.ceil(createdMsDiff / (1000));
+    const createdMinDiff = Math.ceil(createdMsDiff / (1000 * 60));
+    const createdHoursDiff = Math.ceil(createdMsDiff / (1000 * 60 * 60));
+    const createdDaysDiff = Math.ceil(createdMsDiff / (1000 * 60 * 60 * 24)); 
+
+    React.useEffect(
+        () => {
+            if(createdDaysDiff > 0) {
+                setPosted(createdDaysDiff)
+                if (createdDaysDiff === 1)
+                {
+                    setPostedUnit("Day")
+                }
+                else {
+                    setPostedUnit("Days")
+                }
+            } 
+            else if (createdHoursDiff > 0) {
+                setPosted(createdHoursDiff)
+                if (createdHoursDiff === 1)
+                {
+                    setPostedUnit("Hour")
+                }
+                else {
+                    setPostedUnit("Hours")
+                }
+            }
+            else if (createdMinDiff > 0) {
+                setPosted(createdMinDiff)
+                if (createdMinDiff === 1)
+                {
+                    setPostedUnit("Minute")
+                }
+                else {
+                    setPostedUnit("Minutes")
+                }
+            }
+            else if (createdSecDiff > 0) {
+                setPosted(createdSecDiff)
+                if (createdSecDiff === 1)
+                {
+                    setPostedUnit("Second")
+                }
+                else {
+                    setPostedUnit("Seconds")
+                }
+            }
+            else {
+                setPosted(createdMsDiff)
+                if (createdMsDiff === 1)
+                {
+                    setPostedUnit("Millisecond")
+                }
+                else {
+                    setPostedUnit("Milliseconds")
+                }
+            } 
+        
+        }, [now]
+    )
 
     return (
         <div className="show-update">
@@ -100,6 +177,7 @@ export default function SpecificJob(props) {
                     <AiIcons.AiOutlineClose className="close" onClick={props.handleClick}/>
                     {
                     props.user === "Client" ?
+                    !confirmed ?
                     <div className="updateJob">
                         <div className="delete">
                             <button onClick = {showMod} className="home-link2">Update Job</button>
@@ -109,11 +187,28 @@ export default function SpecificJob(props) {
                         </div>
                     </div>
                     :
+                    props.sourceLocation !== "completed" && !completed &&
+                    <div className="delete">
+                        <button onClick = {openComplete} className="home-link4">Click if Job is Complete</button>
+                    </div>
+                    :
+                    job && !job.bidded ?
                     props.location === "jobs" &&
                     <div className="delete">
                         <button onClick = {showMod} className="home-link2">Create a Proposal</button>
                     </div>
-                    }
+                    : 
+                    props.sourceLocation !== "confirmed" && props.sourceLocation !== "completed" ?
+                    <div className="delete">
+                        <h4 className="home-link3">Bidded</h4>
+                    </div>
+                    :
+                    props.sourceLocation === "confirmed" && !completed &&
+                    <div className="time-left">
+                        <h4>{posted} {postedUnit} Remaining.</h4>
+                    </div>
+                    } 
+    
                 </div>
                 <div className='job_display'>
                     <div className="header">
@@ -167,21 +262,22 @@ export default function SpecificJob(props) {
                             </>
                         )}
                     </div>
-                    {
-                        props.user === "Client" &&
-                        <div className="page-link">
-                            <h4 className="conf" style={conf_styles}>Confirmed</h4>
-                            {
-                                !confirmed  ?
-                                <h4 className="comp" style={comp_styles}>Completed</h4>
-                                :
-                                !completed ?
-                                <h4 className="comp" style={comp_styles}>Click if Job has been Completed</h4>
-                                :
-                                <h4 className="comp" style={comp_styles}>Completed</h4>
-                            }
-                        </div> 
-                    }
+                   
+                    <div className="page-link">
+                        {
+                        confirmed ? 
+                        <h4 className="conf" style={conf_styles}>Confirmed</h4>
+                        :
+                        <h4 className="conf" style={conf_styles}>Not Confirmed</h4>
+                        }
+                        {
+                        completed ?
+                        <h4 className="comp" style={comp_styles}>Completed</h4>
+                        :
+                        <h4 className="conf" style={comp_styles}>Not Completed</h4>
+                        }
+                    </div> 
+                    
                 </div>
                 {
                     onDelete &&
@@ -189,7 +285,13 @@ export default function SpecificJob(props) {
                         onRefresh = {props.onRefresh} 
                     />
                 }
-
+                {
+                    onComplete &&
+                    <CompleteJob code = {code} back = {closeComplete} token = {token} handleClick = {props.handleClick} 
+                    onRefresh = {props.onRefresh} completed = {completed} 
+                    getRatedJob = {props.getRatedJob}
+                    />
+                }
             </div>
             :
             <div>

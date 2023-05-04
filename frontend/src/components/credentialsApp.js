@@ -11,6 +11,7 @@ import PainterSignUp from "./painter_signup"
 import ClientSignup from "./client_signup"
 import Login from "./login"
 import HomePage from "./home"
+import SignedContracts from "./signedContracts"
 
 export default function CredentialsApp() {
 

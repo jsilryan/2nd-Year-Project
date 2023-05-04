@@ -162,13 +162,23 @@ class Modify_Proposal(Resource):
 
         if db_painter:
             data = request.get_json()
-            proposal_update.painter_update(
-                data.get("proposal_name"),
-                data.get("proposal_description")
-            )
-            response = make_response(jsonify({
-                "message" : "Proposal Updated"
-            }))
+            if proposal_update.proposal_selection != True:
+                if proposal_update.proposal_confirmed != True:
+                    proposal_update.painter_update(
+                        data.get("proposal_name"),
+                        data.get("proposal_description")
+                    )
+                    response = make_response(jsonify({
+                        "message" : "Proposal Updated"
+                    }))
+                else:
+                    response = make_response(jsonify({
+                        "message" : "Cannot update a confirmed proposal."
+                    })) 
+            else:
+                response = make_response(jsonify({
+                    "message" : "Cannot update a selected proposal."
+                }))    
             return response
             
         elif db_client:
@@ -207,10 +217,15 @@ class Modify_Proposal(Resource):
                             "message" : "Job already has a selected proposal"
                         }))
                 else:
-                    proposal_update.client_update(selection)
-                    response = make_response(jsonify({
-                        "message": "Proposal has been deselected."
-                    }))
+                    if proposal_update.proposal_confirmed != True:
+                        proposal_update.client_update(selection)
+                        response = make_response(jsonify({
+                            "message": "Proposal has been deselected."
+                        }))
+                    else:
+                        response = make_response(jsonify({
+                            "message" : "Cannot deselect a confirmed proposal!" 
+                        }))
                 return response
             else:
                 response = make_response(jsonify({
@@ -230,6 +245,7 @@ class Modify_Proposal(Resource):
         if proposal:
             proposal_dict = proposal.__dict__
             proposal_dict["job_short_code"] = current_job.job_short_code
+
             return proposal_dict
         else:
             proposal = []

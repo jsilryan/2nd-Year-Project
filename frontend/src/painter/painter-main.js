@@ -36,20 +36,10 @@ export default function PainterMain(props) {
                     }
                     setJobNumber(data.length)
                     setJobs(data)
-                    jobNumber = data.length
                 })
                 .catch(err => console.log(err))
             
-            if (message && message === "Token has expired"){
-                fetch('/user_auth/refresh', requestOptions)
-                    .then(res => res.json())
-                    .then(data => {
-                        console.log(data)
-                        setToken(data.access_token)
-                    })
-                    .catch(err => console.log(err))
-            }
-        }, [message]
+        }, []
     )
 
     const styles = {
@@ -61,8 +51,7 @@ export default function PainterMain(props) {
             {
                 jobNumber === 0 ?
                 <main className="empty-main" style={styles}>
-                    <h2 className="empty-h2">You do not have any jobs</h2>
-                    <button className="empty-button">Bid for one now</button>
+                    <h2 className="empty-h2">There are no jobs to bid at the moment.</h2>
                 </main>
                 :
                 <AllJobs jobs = {jobs} sidebar = {props.sidebar} user = {props.getUser}/>

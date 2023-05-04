@@ -13,8 +13,8 @@ import Contracts from "./contracts"
 import ConfirmedJobs from "./confirmed"
 import CompletedJobs from "./completed"
 import SelectedProposals from "./selectedProp"
-import SignedContracts from "./signedContracts"
-import PendingContracts from "./pendingContracts"
+import PendingContracts from "../components/pendingContracts"
+import SignedContracts from "../components/signedContracts"
 
 export default function ClientApp() {
 
@@ -45,7 +45,6 @@ export default function ClientApp() {
           <Route path="/client/contracts/signed" element = {!dispMain && <SignedContracts sidebar = {sidebar}/>} />
           <Route path="/client/contracts/pending" element = {!dispMain && <PendingContracts sidebar = {sidebar}/>} />
         </Routes>
-        
       </div>
     </Router>
   )

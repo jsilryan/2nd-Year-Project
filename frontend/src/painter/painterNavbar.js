@@ -1,5 +1,6 @@
 import React from "react"
 import PainterSidebar from "./painterSidebar"
+import { Link } from "react-router-dom"
 
 export default function PainterNav(props) {
     return (
@@ -11,7 +12,7 @@ export default function PainterNav(props) {
                     <h2>MaRangi</h2>
                 </div>
             </div>
-            <h4 className="check-jobs">My jobs</h4>
+            <Link to="/painter/my-jobs/ongoing" className="check-jobs"><h4>My jobs</h4></Link>
         </nav>
     )
 }

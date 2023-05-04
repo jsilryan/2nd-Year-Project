@@ -109,7 +109,7 @@ export default function SelectedProposals(props) {
                         }
                     </div>
                     :
-                    <SpecificProposal psc = {proposalShortCode} user = {props.user} closeProposal = {hideProposal} className="alljobs"
+                    <SpecificProposal psc = {proposalShortCode} user = {props.getUser} closeProposal = {hideProposal} className="alljobs"
                         showModal = {showModal} closeModal = {setOpenModal} openModal = {openModal}
                         onRefresh = {refProposalsOn} location = {location}
                     />

@@ -18,15 +18,45 @@ import Contracts from "../client/contracts"
 import ConfirmedJobs from "../client/confirmed"
 import CompletedJobs from "../client/completed"
 import SelectedProposals from "./selectedProposals"
-import SignedContracts from "../client/signedContracts"
-import PendingContracts from "../client/pendingContracts"
+import PendingContracts from "./pendingContracts"
 import Main from "../client/main"
 import PainterNav from "../painter/painterNavbar"
 import PainterMain from "../painter/painter-main"
 import CreateJob from "../client/createJob"
 import AllProposals from "./allProposals"
+import SignedContracts from "./signedContracts"
+import RatePainter from "../client/ratePainter"
 
 export default function CredentialsApp2() {
+    const [locality, setLocality] = React.useState(window.location.href)
+
+    console.log(locality)
+
+    React.useEffect(
+        () => {
+            setLocality(window.location.href)
+            if (locality !== "http://localhost:3000/home" && homeNav) {
+                setHomeNav(false)
+            } 
+            else {
+                setHomeNav(true)
+            }
+            if (!userNavig) {
+                if (locality !== "http://localhost:3000/home") {
+                    if (locality !== "http://localhost:3000/signup") {
+                        if (locality !== "http://localhost:3000/login") {
+                            if (locality !== "http://localhost:3000/client-signup") {
+                                if (locality !== "http://localhost:3000/painter-signup") {
+                                    setHomeNav(true)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        }, [locality]
+    )
 
     const [homeNav, setHomeNav] = React.useState(true)
 
@@ -45,16 +75,6 @@ export default function CredentialsApp2() {
 
     function createJobsOff(){
         setCreateJobs(false)
-    }
-
-    const [createProposals, setCreateProposals] = React.useState(false)
-
-    function createProposalsOn() {
-        setCreateProposals(true)
-    }
-
-    function createProposalsOff(){
-        setCreateProposals(false)
     }
 
     function getPainter() {
@@ -87,6 +107,11 @@ export default function CredentialsApp2() {
         setHomeNav(!homeNav)
     }
 
+    const [ratedJob, setRatedJob] = React.useState("")
+    function getRatedJob(jsc) {
+        setRatedJob(jsc)
+    }
+
     return (
         <Router>
             <div>
@@ -103,11 +128,12 @@ export default function CredentialsApp2() {
                             <Route path="/login" element = { <Login handleClick = {userNav} switchClient = {getClient} switchPainter = {getPainter} userNavig = {userNavig}/>} />
                             <Route path="/signup" element = {<SignupPage />}/>
                             <Route path="/home" element = {(!homeNav) &&<HomePage handleClick={changeNav} setNav = {homeNav}/> }/>
+                            <Route path="/painter/my-jobs/confirmed" element = {!dispMain && <ConfirmedJobs sidebar = {sidebar} getUser = {getUser}/>}/>
                             {/* <Route path="/client/my-jobs" element = {!dispMain && <Main sidebar = {sidebar} getUser = {getUser}/>} />
-                            <Route path="/painter/bid-jobs" element = {!dispMain && <PainterMain sidebar = {sidebar} getUser = {getUser}/>} />
-                            <Route path="/client/create-job" element= {<CreateJob sidebar = {sidebar}/>} /> */}
+                            <Route path="/painter/bid-jobs" element = {!dispMain && <PainterMain sidebar = {sidebar} getUser = {getUser}/>} /> */}
                         </Routes>
-                    </div> :
+                    </div> 
+                    :
                     <div className="app-div">
                         {!userNavig ?
                         <Navbar handleClick={changeNav} setNav = {homeNav}/> :
@@ -117,23 +143,27 @@ export default function CredentialsApp2() {
                         {
                             getUser === "Client" ?
                             dispMain && !createJobs && <Main sidebar = {sidebar} getUser = {getUser} jobsOn={createJobsOn}/> :
-                            dispMain && <PainterMain sidebar = {sidebar} getUser = {getUser}/>
+                            dispMain && <PainterMain sidebar = {sidebar} getUser = {getUser} />
                         }
                         <Routes>
                             <Route path="/login" element = { <Login handleClick = {userNav} switchClient = {getClient} switchPainter = {getPainter} userNavig = {userNavig}/> } />
-                            <Route path="/client/my-jobs" element = {!dispMain && !createJobs && <Main sidebar = {sidebar} getUser = {getUser} jobsOn={createJobsOn}/> } />
-                            <Route path="/client/my-jobs/confirmed" element = {!dispMain && <ConfirmedJobs sidebar = {sidebar}/>} />
-                            <Route path="/client/my-jobs/completed" element = {!dispMain && <CompletedJobs sidebar = {sidebar}/>} />
+                            <Route path="/client/my-jobs" element = {!dispMain && !createJobs && <Main sidebar = {sidebar} getUser = {getUser} jobsOn={createJobsOn} getRatedJob = {getRatedJob}/> } />
+                            <Route path="/client/my-jobs/ongoing" element = {!dispMain && <ConfirmedJobs sidebar = {sidebar} getUser = {getUser} getRatedJob = {getRatedJob}/>} />
+                            <Route path="/client/my-jobs/completed" element = {!dispMain && <CompletedJobs sidebar = {sidebar} getUser = {getUser}/>} />
                             <Route path="/client/proposals" element = {!dispMain && <Proposal sidebar = {sidebar} getUser = {getUser}/>} />
-                            <Route path="/client/proposals/selected" element = {!dispMain && <SelectedProposals sidebar = {sidebar}/>} />
-                            <Route path="/client/contracts" element = {!dispMain && <Contracts sidebar = {sidebar}/>} />
-                            <Route path="/client/contracts/signed" element = {!dispMain && <SignedContracts sidebar = {sidebar}/>} />
-                            <Route path="/client/contracts/pending" element = {!dispMain && <PendingContracts sidebar = {sidebar}/>} />
+                            <Route path="/client/proposals/selected" element = {!dispMain && <SelectedProposals sidebar = {sidebar} getUser = {getUser}/>} />
+                            <Route path="/client/contracts/signed" element = {!dispMain && <SignedContracts sidebar = {sidebar} getUser = {getUser}/>} />
+                            <Route path="/client/contracts/pending" element = {!dispMain && <PendingContracts sidebar = {sidebar} getUser = {getUser}/>} />
                             <Route path="/signup" element = {<SignupPage />}/>  
                             <Route path="/painter/bid-jobs" element = {!dispMain && <PainterMain sidebar = {sidebar} getUser = {getUser}/>} />
                             <Route path="/client/create-job" element= {createJobs && <CreateJob sidebar = {sidebar} jobsOff = {createJobsOff}/>} />
                             <Route path="/painter/proposals" element = {!dispMain && <AllProposals sidebar = {sidebar} user = {getUser}/>}/>
-                            <Route path="/painter/proposals/selected" element = {!dispMain && <SelectedProposals sidebar = {sidebar} user = {getUser}/>} />
+                            <Route path="/painter/proposals/selected" element = {!dispMain && <SelectedProposals sidebar = {sidebar} getUser = {getUser}/>} />
+                            <Route path="/painter/contracts/pending" element = {!dispMain && <PendingContracts sidebar = {sidebar} getUser = {getUser}/>} />
+                            <Route path="/painter/contracts/signed" element={!dispMain && <SignedContracts sidebar = {sidebar} getUser = {getUser}/>}/>
+                            <Route path="/painter/my-jobs/ongoing" element = {!dispMain && <ConfirmedJobs sidebar = {sidebar} getUser = {getUser}/>}/>
+                            <Route path="/painter/my-jobs/completed" element = {!dispMain && <CompletedJobs sidebar = {sidebar} getUser = {getUser}/>}/>
+                            <Route path="/ratings" element = {!dispMain && <RatePainter sidebar = {sidebar} ratedJob = {ratedJob}/>} />
                         </Routes>
                     </div>
                 }

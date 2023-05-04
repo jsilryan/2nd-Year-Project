@@ -74,7 +74,9 @@ class Enter_Ratings(Resource):
         new_rating.save()
         job.rated_update(True)
         painter = Painter.query.get_or_404(painter_id)
-        response = make_response(jsonify({"message": f"Rating on Job {job_short_code} has been made for {painter.first_name} {painter.last_name} - {rating_no} STAR!"}))
+        response = make_response(jsonify({
+            "message": f"Rating on Job {job_short_code} has been made for {painter.first_name} {painter.last_name} - {rating_no} STAR!"
+        }))
         return response
 
 @rating_ns.route("/painter/ratings")

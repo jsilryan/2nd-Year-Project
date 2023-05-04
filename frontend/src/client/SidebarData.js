@@ -21,8 +21,8 @@ export const SidebarData = [
                 icon: <IoIcons.IoIosPaper />
             },
             {
-                title: "Confirmed Jobs",
-                path: "/client/my-jobs/confirmed",
+                title: "Ongoing Jobs",
+                path: "/client/my-jobs/ongoing",
                 icon: <GiIcons.GiConfirmed />
             },
             {
@@ -58,11 +58,6 @@ export const SidebarData = [
         iconClosed: <RiIcons.RiArrowDownSFill />,
         iconOpened: <RiIcons.RiArrowUpSFill />,
         subnav : [
-            {
-                title: "All Contracts",
-                path: "/client/contracts",
-                icon: <IoIcons.IoIosPaper />
-            },
             {
                 title: "Signed Contracts",
                 path: "/client/contracts/signed",

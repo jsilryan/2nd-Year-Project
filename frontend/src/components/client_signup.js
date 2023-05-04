@@ -204,7 +204,7 @@ export default function ClientSignup(props) {
     
 
     return (
-        <div className="home">
+        <div className="client-home">
             <div className="signup-login">
                 <form onSubmit={handleSubmit} className="form">
                     <h2 className="form-title">Client Sign Up</h2>

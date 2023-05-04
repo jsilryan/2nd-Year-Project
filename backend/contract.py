@@ -12,13 +12,14 @@ contract_ns = Namespace("contract", description = "Contract Creation")
 contract_model = contract_ns.model (
     "Contract Details",
     {
-    "contract_short_code" : fields.String(),
-    "payment_amount" : fields.String(),
-    "client_sign" : fields.Boolean(),
-    "painter_sign" : fields.Boolean(),
-    "signed" : fields.Boolean(),
-    "signed_at" : fields.DateTime(),
-    "job_id" : fields.Integer()
+        "contract_short_code" : fields.String(),
+        "payment_amount" : fields.String(),
+        "client_sign" : fields.Boolean(),
+        "painter_sign" : fields.Boolean(),
+        "signed" : fields.Boolean(),
+        "signed_at" : fields.DateTime(),
+        "job_id" : fields.Integer(),
+        'job_short_code': fields.String()
     }
 )
 
@@ -115,7 +116,10 @@ class Client_Contracts(Resource):
             for y in range(0, len(contracts)):
                 if (client_jobs[x].id == contracts[y].job_id):
                     if (contracts[y].signed == False):
-                        pending_client_contracts.append(contracts[y])
+                        current_job = Job.query.get(contracts[y].job_id)
+                        contract_dict = contracts[y].__dict__
+                        contract_dict["job_short_code"] = current_job.job_short_code
+                        pending_client_contracts.append(contract_dict)
 
         return pending_client_contracts
 
@@ -141,7 +145,10 @@ class Get_Painter_Contracts(Resource):
                 for y in range(0, len(contracts)):
                     if (painter_proposals[x].job_id == contracts[y].job_id):
                         if (contracts[y].signed == False):
-                            pending_painter_contracts.append(contracts[y])
+                            current_job = Job.query.get(contracts[y].job_id)
+                            contract_dict = contracts[y].__dict__
+                            contract_dict["job_short_code"] = current_job.job_short_code
+                            pending_painter_contracts.append(contract_dict)
             
             return pending_painter_contracts
         else:
@@ -217,6 +224,22 @@ class Modify_Contract(Resource):
             job = Job.query.filter_by(id = job_id).first()
 
             job.confirmed_update(True)
+            start_date_str = datetime.now()
+            start_date = datetime.strptime(start_date_str.strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S')
+
+            #Make the starting date the current date
+            job_update.update (
+                job.job_name,
+                job.job_description,
+                job.property_location,
+                job.property_type,
+                job.job_type,
+                job.total_floors, 
+                job.total_rooms, 
+                start_date,
+                job.end_date,
+                job.max_proposals
+            )
             client_id = job.client_id
             proposals = Proposal.query.all()
             for x in range(0, len(proposals)):
@@ -237,7 +260,7 @@ class Modify_Contract(Resource):
         response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate" 
         return response
 
-    @jwt_required()
+    @jwt_required() 
     def delete(self, contract_short_code):
         """Delete Contract by contract_short_code"""
         delete_contract = Contract.query.filter_by(contract_short_code = contract_short_code).first()
@@ -264,7 +287,11 @@ class Modify_Contract(Resource):
     def get(self, contract_short_code):
         """Get details of a contract via short code:"""
         contract = Contract.query.filter_by(contract_short_code = contract_short_code).first()
+        job_id = contract.job_id
+        current_job = Job.query.get(job_id) 
         if contract:
+            contract_dict = contract.__dict__
+            contract_dict["job_short_code"] = current_job.job_short_code
             return contract
         else:
             response = []
@@ -295,7 +322,10 @@ class Signed_Contracts(Resource):
                 for y in range(0, len(contracts)):
                     if (client_jobs[x].id == contracts[y].job_id):
                         if (contracts[y].signed == True):
-                            signed_contracts.append(contracts[y])
+                            current_job = Job.query.get(contracts[y].job_id)
+                            contract_dict = contracts[y].__dict__
+                            contract_dict["job_short_code"] = current_job.job_short_code
+                            signed_contracts.append(contract_dict)
 
         elif db_painter:
             painter_proposals = []
@@ -315,7 +345,10 @@ class Signed_Contracts(Resource):
                 for y in range(0, len(contracts)):
                     if confirmed_painter_jobs[x].id == contracts[y].job_id:
                         if contracts[y].signed == True:
-                            signed_contracts.append(contracts[y])
+                            current_job = Job.query.get(contracts[y].job_id)
+                            contract_dict = contracts[y].__dict__
+                            contract_dict["job_short_code"] = current_job.job_short_code
+                            signed_contracts.append(contract_dict)
 
         if len(signed_contracts) > 0:
             response = signed_contracts

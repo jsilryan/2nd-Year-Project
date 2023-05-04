@@ -30,7 +30,7 @@ export default function AllJobs(props) {
         setOpenModal(true)
     }
 
-    const location = "jobs"
+    const newlocation = "jobs"
 
     return (
         <div style={styles} >
@@ -38,10 +38,15 @@ export default function AllJobs(props) {
             !showJob ?
             <div className="alljobs">
                 {
+                props.location !== "confirmed" && props.location !== "completed" ?
                 props.user === "Client" ?
                 <h2 className="component-heading">Your Jobs</h2>
                 :
                 <h2 className="component-heading">Bid Jobs</h2>
+                :
+                props.location === "confirmed" ?
+                <h2 className="component-heading">Ongoing Jobs</h2> :
+                <h2 className="component-heading">Completed Jobs</h2>
                 }   
                 {
                     props.jobs && props.jobs.map((job) => {
@@ -58,7 +63,8 @@ export default function AllJobs(props) {
             <SpecificJob handleClick={hideJob} jsc={jobShortCode} user = {props.user} showModal = {showModal} 
                 closeModal = {setOpenModal} openModal = {openModal} className="alljobs" 
                 onRefresh = {props.onRefresh} offRefresh = {props.offRefresh}
-                location = {location}
+                location = {newlocation} sourceLocation = {props.location}
+                getRatedJob = {props.getRatedJob}
             />
         }
         </div>

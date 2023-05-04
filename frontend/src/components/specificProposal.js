@@ -135,12 +135,17 @@ export default function SpecificProposal(props) {
                     {
                     props.user === "Painter" ? 
                     <div className="updateJob">
-                        <div className="delete">
-                            <button onClick = {showMod} className="home-link2">Update Proposal</button>
+                        {
+                        proposal && !proposal.proposal_selection && !proposal.proposal_confirmed &&
+                        <div>
+                            <div className="delete">
+                                <button onClick = {showMod} className="home-link2">Update Proposal</button>
+                            </div>
+                            <div className="delete">
+                                <button onClick = {openDelete} className="home-link2">Delete Proposal</button>
+                            </div>
                         </div>
-                        <div className="delete">
-                            <button onClick = {openDelete} className="home-link2">Delete Proposal</button>
-                        </div>
+                        }
                         <div className="delete" onClick={() => dispJob(proposal.job_short_code)}>
                             <button className="home-link2">Job Details</button>
                         </div>
@@ -197,8 +202,18 @@ export default function SpecificProposal(props) {
                         </div>
                     </div>
                     <div className="page-link">
-                        <h4 className="conf" style={conf_styles}>Selected</h4>
-                        <h4 className="comp" style={comp_styles}>Confirmed</h4>
+                        {
+                            selected ? 
+                            <h4 className="conf" style={conf_styles}>Selected</h4>
+                            :
+                            <h4 className="conf" style={conf_styles}>Not Selected</h4>
+                            }
+                            {
+                            confirmed ?
+                            <h4 className="comp" style={comp_styles}>Confirmed</h4>
+                            :
+                            <h4 className="conf" style={comp_styles}>Not Confirmed</h4>
+                            }
                     </div> 
                 </div>
                 }

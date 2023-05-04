@@ -5,7 +5,7 @@ from flask_jwt_extended import (JWTManager, create_access_token,
 create_refresh_token, jwt_required, get_jwt_identity
 )
 from django.shortcuts import get_object_or_404
-from datetime import datetime
+from datetime import datetime, time
 import random
 
 job_ns = Namespace("job", description = "Job Creation") 
@@ -28,7 +28,8 @@ job_model = job_ns.model(
         "max_proposals" : fields.Integer(),
         "rated" : fields.Boolean(),
         "job_created_at" : fields.DateTime(),
-        "client_id" : fields.Integer()
+        "client_id" : fields.Integer(),
+        "bidded" : fields.Boolean()
     }
 )
 
@@ -133,9 +134,14 @@ class Painter_Jobs_Details(Resource):
                     individual_job_proposals.append(proposals[x])
             job_proposals.append(individual_job_proposals)
 
-        #Display only jobs whose maximum number of proposals have not been reached
+        # Get the current datetime
+        now = datetime.now()
+
+        #Display only jobs whose maximum number of proposals have not been reached and the end_date has not passed the current date
         for x in range(0, len(jobs)):
-            if (len(job_proposals[x]) < jobs[x].max_proposals and jobs[x].job_confirmed != True ):
+            other_date = datetime.combine(jobs[x].end_date, time())
+            time_difference = now - other_date
+            if (len(job_proposals[x]) < jobs[x].max_proposals and jobs[x].job_confirmed != True and time_difference.total_seconds()  > 0):
                 if (current_painter.area == jobs[x].property_location):
                     close_jobs.append(jobs[x]) 
                     
@@ -167,9 +173,24 @@ class Job_Details(Resource):
     @jwt_required()
     def get(self, job_short_code):
         """Get details of a job via short code:"""
+        email = get_jwt_identity()
+
+        db_painter = Painter.query.filter_by(email = email).first()
+        proposals = Proposal.query.all()
         job = Job.query.filter_by(job_short_code = job_short_code).first()
+    
         if job:
-            return job
+            if db_painter:
+                job_dict = job.__dict__
+                bidded = False
+                for x in range(0, len(proposals)):
+                    if (db_painter.id == proposals[x].painter_id):
+                        if (job.id == proposals[x].job_id): 
+                            bidded =True                    
+                job_dict["bidded"] = bidded
+                return job_dict
+            else:
+                return job
         else:
             return []
 
@@ -264,8 +285,9 @@ class Update_Job(Resource):
                         "message" : "Job completed."
                     }))
                 else:
+                    #To be changed
                     response = make_response(jsonify({
-                        "message" : "Cannot change a completed job."
+                        "message" : "Job is not completed."
                     }))
             else:
                 response = make_response(jsonify({
@@ -312,7 +334,7 @@ class Confirmed_Jobs(Resource):
     @job_ns.expect(job_model)
     @jwt_required()
     def get(self):
-        """Get all confirmed jobs for either client or painter"""
+        """Get all ongoing jobs for either client or painter"""
         email = get_jwt_identity()
         db_painter = Painter.query.filter_by(email=email).first()
         db_client = Client.query.filter_by(email=email).first()
@@ -329,7 +351,8 @@ class Confirmed_Jobs(Resource):
                     client_jobs.append(jobs[x])
             for x in range(0, len(client_jobs)):
                 if (client_jobs[x].job_confirmed == True):
-                    confirmed_jobs.append(client_jobs[x])
+                    if (client_jobs[x].job_completed != True):
+                        confirmed_jobs.append(client_jobs[x])
 
         elif db_painter:
             painter_proposals = []
@@ -338,24 +361,20 @@ class Confirmed_Jobs(Resource):
                 if (db_painter.id == proposals[x].painter_id):
                     painter_proposals.append(proposals[x])
             for x in range(0, len(painter_proposals)):
-                if (painter_proposals.proposal_selection == True):
+                if (painter_proposals[x].proposal_selection == True):
                     selected_proposals.append(painter_proposals[x])
             for x in range(0, len(selected_proposals)):
                 job_id = selected_proposals[x].job_id
                 job = Job.query.filter_by(id = job_id).first()
-                confirmed_jobs.append(job)
+                if (job.job_confirmed == True):
+                    if (job.job_completed != True):
+                        confirmed_jobs.append(job)
 
         if len(confirmed_jobs) > 0:
-            response = make_response(jsonify({
-                "message" : "The following jobs are confirmed:",
-                "data" : confirmed_jobs
-            }))
+            return confirmed_jobs
         else:
-            response = make_response(jsonify({
-                "message" : "No confirmed jobs yet."
-            }))
-
-        return response
+            response = []
+            return response
 
 @job_ns.route("/job/completed")
 class Completed_Jobs(Resource):
@@ -380,7 +399,7 @@ class Completed_Jobs(Resource):
                     client_jobs.append(jobs[x])
             for x in range(0, len(client_jobs)):
                 if (client_jobs[x].job_completed == True):
-                    job_completed_jobs.append(client_jobs[x])
+                    completed_jobs.append(client_jobs[x])
 
         elif db_painter:
             painter_proposals = []
@@ -389,7 +408,7 @@ class Completed_Jobs(Resource):
                 if (db_painter.id == proposals[x].painter_id):
                     painter_proposals.append(proposals[x])
             for x in range(0, len(painter_proposals)):
-                if (painter_proposals.proposal_selection == True):
+                if (painter_proposals[x].proposal_selection == True):
                     selected_proposals.append(painter_proposals[x])
             for x in range(0, len(selected_proposals)):
                 job_id = selected_proposals[x].job_id
@@ -398,13 +417,6 @@ class Completed_Jobs(Resource):
                     completed_jobs.append(job)
 
         if len(completed_jobs) > 0:
-            response = make_response(jsonify({
-                "message" : "The following jobs are completed:",
-                "data" : completed_jobs
-            }))
+            return completed_jobs
         else:
-            response = make_response(jsonify({
-                "message" : "No completed jobs yet."
-            }))
-
-        return response
+            return completed_jobs

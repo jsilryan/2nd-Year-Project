@@ -40,12 +40,11 @@ export default function Main(props) {
                 .then(data => {
                     console.log(data)
                     console.log(data.length)
-                    setJobNumber(data.length)
+                    data && setJobNumber(data.length)
                     if (data.msg){
                         message = data.msg
                     }
                     setJobs(data)
-                
                 })
                 .catch(err => console.log(err))
 
@@ -67,7 +66,7 @@ export default function Main(props) {
                     <Link to="/client/create-job"><button className="empty-button" onClick={props.jobsOn}>Register one now</button></Link>
                 </main>
                 :
-                <AllJobs jobs = {jobs} sidebar = {props.sidebar} user = {props.getUser} onRefresh = {refJobsOn}/>
+                <AllJobs jobs = {jobs} sidebar = {props.sidebar} user = {props.getUser} onRefresh = {refJobsOn} getRatedJob = {props.getRatedJob}/>
             }
         </div>        
     )
