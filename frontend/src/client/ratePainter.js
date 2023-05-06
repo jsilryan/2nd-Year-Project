@@ -56,18 +56,19 @@ export default function RatePainter(props) {
     }
 
     return (
-        <div className = "empty-rating">
-            <div className="rating_display">
-                <h2>Rate your painter:</h2>
-                <Rate rating = {rating} onRating = {onRating} ratingProps = {ratingProps}/>
-                {
-                rating !== "" &&
-                <div className="delete">
-                    <button onClick = {ratePainter} className="home-link2">Done</button>
+        <div className="try">
+            <div className = "empty-rating">
+                <div className="rating_display">
+                    <h2>Rate your painter:</h2>
+                    <Rate rating = {rating} onRating = {onRating} ratingProps = {ratingProps}/>
+                    {
+                    rating !== "" &&
+                    <div className="delete">
+                        <button onClick = {ratePainter} className="home-link2">Done</button>
+                    </div>
+                    }
                 </div>
-                }
             </div>
         </div>
-
     )
 }

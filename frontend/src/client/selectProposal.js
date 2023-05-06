@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom"
 export default function SelectProposal(props) {
     const navigate = useNavigate()
     console.log(props.selected)
+    
 
     const proposalSelection = props.selected
     
@@ -33,6 +34,7 @@ export default function SelectProposal(props) {
             })
             .catch((err) => console.log(err));
             props.back()
+            props.dispContract(props.job_short_code)
             props.onRefresh()
             props.handleClick()
 

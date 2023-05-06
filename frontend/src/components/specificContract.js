@@ -4,11 +4,14 @@ import UpdateContract from "../client/clientUpdateContract";
 import DeleteContract from "../client/deleteContract";
 import ClientUpdateContract from "../client/clientUpdateContract";
 import PainterSignContract from "../painter/painterSignContract";
+import ReactToPrint from "react-to-print"
+import { useRef } from "react";
 
 export default function SpecificContract (props) {
     const [contract, setContract] = React.useState(null)
     const [token, setToken] = React.useState(() => JSON.parse(localStorage.getItem("REACT_TOKEN_AUTH_KEY")))
     const [time, setTime] = React.useState() //Contract Time
+    const componentRef = useRef()
     const requestOptions = {
         method : "GET",
         headers : {
@@ -135,13 +138,29 @@ export default function SpecificContract (props) {
     }
 
     const jobStyle = (!onDelete && !onSelect) ? "job" : "job-opaque"
+    const jobDisplay = (!onDelete && !onSelect) ? "contract_display" : "job_display_opaque"
+    const sideDisplay = (!onDelete && !onSelect) ? "side" : "side_opaque"
+    const tryStyle = (!onDelete && !onSelect) ? "try" : "try-opaque"
+
+    function handlePrint() {
+        window.print()
+    }
+    // const border = {
+    //     borderBottom: '1px solid gray',
+    //     width: '100%'
+    // };
+
+    // const pad = {
+    //     padding : "5px"
+    // }
+
 
     return(
-        <div>
+        <div className={tryStyle}>
         {
         !showContract ?
         <div className={jobStyle}>
-            <div className="side">
+            <div className={sideDisplay}>
                 <AiIcons.AiOutlineClose className="close" onClick={props.handleClick}/>
                 {
                 props.user === "Client" ?
@@ -155,8 +174,15 @@ export default function SpecificContract (props) {
                     </div>
                 </div> 
                 :
-                <div className="delete">
-                    <button onClick = {openDelete} className="home-link2">Terminate Contract</button>
+                <div className="updateJob">
+                    <div className="delete">
+                        <button onClick = {openDelete} className="home-link2">Terminate Contract</button>
+                    </div>
+                    <div className="delete">
+                        <ReactToPrint trigger ={() => <button className="home-link2">Print and Download</button>}
+                        content = {() => componentRef.current}
+                        />
+                    </div>
                 </div>
                 : !signed ?
                 !painterSign ?
@@ -168,34 +194,51 @@ export default function SpecificContract (props) {
                     <button onClick = {openSelect} className="home-link2">Unsign Contract</button>
                 </div>
                 :
-                <div className="delete">
-                    <button onClick = {openDelete} className="home-link2">Terminate Contract</button>
+                <div className="updateJob">
+                    <div className="delete">
+                        <button onClick = {openDelete} className="home-link2">Terminate Contract</button>
+                    </div>
+                    <div className="delete">
+                        <ReactToPrint trigger ={() => <button className="home-link2">Print / Download</button>}
+                        content = {() => componentRef.current}
+                        />
+                    </div>
                 </div>
                 }
             </div>
-            <div className='job_display'>
-                <div className="header">
-                    <h1>Contract:</h1>
+            
+            <div className={jobDisplay} >
+                <div className= "component-ref" ref = {componentRef}>
+                <div className="contract-header">
+                    <div>
+                        <h2>CONTRACT:</h2>
+                    </div>
                 </div>
-                <div className="job_interior">
-                    <p>The Painting Contract is made on {signedAt.toLocaleString()} by and between {} (Property Owner) and {} (Painter). 
-                    The conditions bind both Property Owner and Painter, jointly and severally.</p>
-                    <p>The Contract is for Job {contract && contract.job_short_code} with the following details:</p>
-                    <p>Job Name: {job && job.job_name}</p>
-                    <p>Job Description: {job && job.job_description}</p>
-                    <p>Property Location: {propLoc}</p>
-                    <p>Property Type: {propType}</p>
-                    <p>Job Type: {jobType}</p>            
-                    <p>Total Floors: {job && job.total_floors}</p>
-                    <p>Start Date: {job && job.start_date}</p>
-                    <p>End Date: {job && job.end_date}</p>   
-                    <p>Payment Amount: Kshs. {contract && contract.payment_amount}</p>    
+                <div className="job_interior" >
+                    <p className="first-line-contract">The Painting Contract is made on {signedAt.toLocaleString()} by and between: </p>
+                    <p><span className="font-bold"> {contract && contract.client_first_name} {contract && contract.client_last_name}</span> (Property Owner) and <span className="font-bold">{contract && contract.painter_first_name} {contract && contract.painter_last_name}</span> (Painter).</p>
+                    <p>The conditions bind both Property Owner and Painter, jointly and severally.</p>
+                </div>
+                <div className="header">
+                    <h3>Contract Details for Job {contract && contract.job_short_code}:</h3>
+                </div>
+                <div className="job_interior" >
+                    <p className="job_det"><span className="font-bold">Job Name:</span> <span className="real_info">{job && job.job_name}</span></p>
+                    <p className="job_det"><span className="font-bold">Job Description:</span> <span className="real_info">{job && job.job_description}</span></p>
+                    <p className="job_det"><span className="font-bold">Property Location:</span> <span className="real_info">{propLoc}</span></p>
+                    <p className="job_det"><span className="font-bold">Property Type:</span> <span className="real_info">{propType}</span></p>
+                    <p className="job_det"><span className="font-bold">Job Type:</span> <span className="real_info">{jobType}</span></p>            
+                    <p className="job_det"><span className="font-bold">Total Floors:</span> <span className="real_info">{job && job.total_floors}</span></p>
+                    <p className="job_det"><span className="font-bold">Start Date:</span> <span className="real_info">{job && job.start_date}</span></p>
+                    <p className="job_det"><span className="font-bold">End Date:</span> <span className="real_info">{job && job.end_date}</span></p>   
+                    <p className="job_det"><span className="font-bold">Payment Amount: </span> <span className="real_info">Kshs. {contract && contract.payment_amount} </span></p>    
                     {
                         signed &&
                         <div>
-                            <p>Signed At: {signedAt.toLocaleString()}</p>
+                            <p className="job_det"><span className="font-bold">Signed At:</span> <span className="real_info">{signedAt.toLocaleString()}</span></p>
                         </div>
                     }
+                </div>
                 </div>
                 {
                 !signed ?

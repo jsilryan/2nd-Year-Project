@@ -19,7 +19,11 @@ contract_model = contract_ns.model (
         "signed" : fields.Boolean(),
         "signed_at" : fields.DateTime(),
         "job_id" : fields.Integer(),
-        'job_short_code': fields.String()
+        'job_short_code': fields.String(),
+        "client_first_name" : fields.String(),
+        "client_last_name" : fields.String(),
+        "painter_first_name" : fields.String(),
+        "painter_last_name" : fields.String()
     }
 )
 
@@ -289,10 +293,28 @@ class Modify_Contract(Resource):
         contract = Contract.query.filter_by(contract_short_code = contract_short_code).first()
         job_id = contract.job_id
         current_job = Job.query.get(job_id) 
+        client_id = current_job.client_id
+        proposals = Proposal.query.all()
+        job_proposals = []
+        for x in range(0, len(proposals)):
+            if proposals[x].job_id == current_job.id:
+                job_proposals.append(proposals[x])
+        for x in range(0, len(job_proposals)):
+            if job_proposals[x].proposal_confirmed == True:
+                confirmed_proposal = job_proposals[x]
+
+        painter_id = confirmed_proposal.painter_id
+        painter = Painter.query.get(painter_id)
+        client = Client.query.get(client_id)
         if contract:
             contract_dict = contract.__dict__
             contract_dict["job_short_code"] = current_job.job_short_code
-            return contract
+            if contract.signed == True:
+                contract_dict["client_first_name"] = client.first_name
+                contract_dict["client_last_name"] = client.last_name
+                contract_dict["painter_first_name"] = painter.first_name
+                contract_dict["painter_last_name"] = painter.last_name
+            return contract_dict
         else:
             response = []
             return response

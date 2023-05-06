@@ -123,14 +123,17 @@ export default function SpecificProposal(props) {
     }
 
     const jobStyle = (!onDelete && !onSelect) ? "job" : "job-opaque"
+    const jobDisplay = (!onDelete && !onSelect) ? "job_display" : "job_display_opaque"
+    const sideDisplay = (!onDelete && !onSelect) ? "side" : "side_opaque"
+    const tryStyle = (!onDelete && !onSelect) ? "try" : "try-opaque"
 
     return (
-        <div>
+        <div className={tryStyle}>
         {
         !showJob && !showContract ?
         <div className="show-update">
             <div className={jobStyle}>
-                <div className="side">
+                <div className={sideDisplay}>
                     <AiIcons.AiOutlineClose className="close" onClick ={props.closeProposal}/>
                     {
                     props.user === "Painter" ? 
@@ -159,12 +162,17 @@ export default function SpecificProposal(props) {
                         </div>
                         :
                         <div>
-                            <div className="delete" onClick={() => dispContract(proposal.job_short_code)}>
-                                <button className="home-link2">Create Contract</button>
+                            {
+                            !proposal.proposal_confirmed &&
+                            <div>
+                                <div className="delete" onClick={() => dispContract(proposal.job_short_code)}>
+                                    <button className="home-link2">Create Contract</button>
+                                </div>
+                                <div className="delete">
+                                    <button onClick = {openSelect} className="home-link2">Deselect Proposal</button>
+                                </div>
                             </div>
-                            <div className="delete">
-                                <button onClick = {openSelect} className="home-link2">Deselect Proposal</button>
-                            </div>
+                            }
                             {
                                 props.location && props.location === "selectedProposal" &&
                                 <div className="delete" onClick={() => dispJob(proposal.job_short_code)}>
@@ -185,7 +193,7 @@ export default function SpecificProposal(props) {
                 </div>
                 {
                 proposal &&
-                <div className='job_display'>
+                <div className={jobDisplay}>
                     <div className="header">
                         <h2>Proposal Details</h2>
                     </div>
@@ -220,7 +228,7 @@ export default function SpecificProposal(props) {
                 {
                     onSelect &&
                     <SelectProposal code = {code} back = {closeSelect} token = {token} handleClick = {props.closeProposal}
-                        onRefresh = {props.onRefresh} selected = {selected}
+                        onRefresh = {props.onRefresh} selected = {selected} dispContract = {dispContract} jsc = {proposal.job_short_code}
                     />
                 }
                 {

@@ -4,10 +4,6 @@ import DisplayJobs from "../components/displayJobs";
 import AllProposals from "../components/allProposals";
 
 export default function JobsWithProposals(props) {
-    let left = props.sidebar ? "250px" : "auto"
-    const styles = {
-        marginLeft: left
-    }
 
     const [showProposals, setShowProposals] = React.useState(false)
 
@@ -29,7 +25,7 @@ export default function JobsWithProposals(props) {
     }
 
     return (
-        <div style={styles} >
+        <div>
         {
             !showProposals ?
             <div className="alljobs">

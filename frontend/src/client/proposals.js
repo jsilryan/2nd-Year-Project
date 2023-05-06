@@ -4,6 +4,12 @@ import JobsWithProposals from "./jobsWithProposals"
 
 export default function Proposal(props) {
     let left = props.sidebar ? "250px" : "auto"
+    const styles = {
+        marginLeft: left,
+        backgroundColor: "#f1f1f1",
+        height: "100vh",
+        overflow: "auto"
+    }
     const [jobs, setJobs] = React.useState([])
     const [token, setToken] = React.useState(() => JSON.parse(localStorage.getItem("REACT_TOKEN_AUTH_KEY")))
     console.log(token)
@@ -32,12 +38,9 @@ export default function Proposal(props) {
         }, []
     )
 
-    const styles = {
-        marginLeft: left
-    }
 
     return (
-        <div>
+        <div style = {styles}>
         {
             jobNumber === 0 ?
             <main className="empty-main" style={styles}>

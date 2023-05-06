@@ -5,7 +5,10 @@ import SpecificJob from "./specificJob"
 export default function AllJobs(props) {
     let left = props.sidebar ? "250px" : "auto"
     const styles = {
-        marginLeft: left
+        marginLeft: left,
+        backgroundColor: "#f1f1f1",
+        height: "100vh",
+        overflow: "auto"
     }
 
     const [showJob, setShowJob] = React.useState(false)

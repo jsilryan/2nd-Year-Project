@@ -6,11 +6,12 @@ import * as AiIcons from "react-icons/ai"
 export default function SelectedProposals(props) {
     let left = props.sidebar ? "250px" : "auto"
 
-    const styles = 
-    {
-        marginLeft: left
+    const styles = {
+        marginLeft: left,
+        backgroundColor: "#f1f1f1",
+        height: "100vh",
+        overflow: "auto"
     }
-
     const [proposals, setProposals] = React.useState([])
     const [token, setToken] = React.useState(() => JSON.parse(localStorage.getItem("REACT_TOKEN_AUTH_KEY")))
     console.log(token)

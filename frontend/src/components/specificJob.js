@@ -101,6 +101,9 @@ export default function SpecificJob(props) {
     }
 
     const jobStyle = !onDelete && !onComplete ? "job" : "job-opaque"
+    const jobDisplay = (!onDelete && !onComplete) ? "job_display" : "job_display_opaque"
+    const sideDisplay = (!onDelete && !onComplete) ? "side" : "side_opaque"
+    const tryStyle = (!onDelete && !onComplete) ? "try" : "try-opaque"
 
     const [posted, setPosted] = React.useState()
     const [postedUnit, setPostedUnit] = React.useState()
@@ -169,11 +172,11 @@ export default function SpecificJob(props) {
     )
 
     return (
-        <div className="show-update">
+        <div className={tryStyle}>
             {
             !props.openModal ?
             <div className={jobStyle}>
-                <div className="side">
+                <div className={sideDisplay}>
                     <AiIcons.AiOutlineClose className="close" onClick={props.handleClick}/>
                     {
                     props.user === "Client" ?
@@ -210,7 +213,7 @@ export default function SpecificJob(props) {
                     } 
     
                 </div>
-                <div className='job_display'>
+                <div className={jobDisplay}>
                     <div className="header">
                         <h2>Job Details</h2>
                     </div>
