@@ -8,9 +8,11 @@ export default function PendingContracts(props) {
     let left = props.sidebar ? "250px" : "auto"
 
     const styles = {
-        marginLeft: left
+        marginLeft: left,
+        backgroundColor: "#f1f1f1",
+        height: "100vh",
+        overflow: "auto"
     }
-
     const requestOptions = {
         method : "GET",
         headers : {
@@ -59,10 +61,10 @@ export default function PendingContracts(props) {
     let location = "Pending"
 
     return (
-        <div>
+        <div style={styles}>
         {
             pContractNumber === 0 ?
-            <main className="empty-main" style={styles}>
+            <main className="empty-main">
                 <h2 className="empty-h2">You have 0 Pending Contracts.</h2>
             </main>
             :

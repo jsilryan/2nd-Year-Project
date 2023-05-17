@@ -11,6 +11,8 @@ from proposal import proposal_ns
 from contract import contract_ns
 from login import user_auth_ns
 from ratings import rating_ns
+from portfolio import portfolio_ns
+from images import image_ns
 from flask_cors import CORS #Helps the frontend to work with the backend
 
 # @app.route("/test")
@@ -39,6 +41,8 @@ def create_app(config): #application factory
     api.add_namespace(proposal_ns)
     api.add_namespace(contract_ns)
     api.add_namespace(rating_ns)
+    api.add_namespace(portfolio_ns)
+    api.add_namespace(image_ns)
 
     @app.shell_context_processor
     def make_shell_context(): #Create a context in shell to access the db

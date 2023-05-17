@@ -43,7 +43,7 @@ export default function Proposal(props) {
         <div style = {styles}>
         {
             jobNumber === 0 ?
-            <main className="empty-main" style={styles}>
+            <main className="empty-main">
                 <h2 className="empty-h2">You have 0 proposals.</h2>
             </main>
             :

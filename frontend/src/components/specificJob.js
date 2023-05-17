@@ -19,7 +19,7 @@ export default function SpecificJob(props) {
     }
     const refreshRequestOptions = {
         method: "POST",
-        headers: {
+        headers: { 
             'Authorization' : `Bearer ${token}`
         }
       }
@@ -56,6 +56,7 @@ export default function SpecificJob(props) {
     const Prop_Location = job && job.property_location
     const Property_Type = job && job.property_type
     const Job_Type = job && job.job_type
+    const Contract_Type = job && job.contract_type
     const confirmed = job && job.job_confirmed
     const completed = job && job.job_completed
     
@@ -80,6 +81,7 @@ export default function SpecificJob(props) {
     const propLoc = job && Prop_Location ? Prop_Location.replace("Prop_Location.", "") : ''
     const propType = job && Property_Type ? Property_Type.replace("Property_Type.", "") : ''
     const jobType = job && Job_Type ? Job_Type.replace("Job_Type.", "") : ''
+    const contractType = Contract_Type ? Contract_Type.replace("Contract_Type.", "") : ''
 
     const [onDelete, setOnDelete] = React.useState(false)
 
@@ -88,7 +90,7 @@ export default function SpecificJob(props) {
     }
 
     function closeDelete() {
-        setOnDelete(false)
+        setOnDelete(false) 
     }
     const [onComplete, setOnComplete] = React.useState(false)
 
@@ -172,7 +174,7 @@ export default function SpecificJob(props) {
     )
 
     return (
-        <div className={tryStyle}>
+        <div>
             {
             !props.openModal ?
             <div className={jobStyle}>
@@ -240,6 +242,10 @@ export default function SpecificJob(props) {
                                     <div className="job-info">
                                         <h3>Job Type: </h3>
                                         <p>{jobType}</p>
+                                    </div>
+                                    <div className="job-info">
+                                        <h3>Contract Type: </h3>
+                                        <p>{contractType}</p>
                                     </div>
                                     <div className="job-info">
                                         <h3>Total Floors: </h3>

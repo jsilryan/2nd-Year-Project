@@ -40,7 +40,10 @@ export default function AllContracts(props) {
             !showContract ?
             props.location === "Pending" ?
             <div className="alljobs">
-                <h2 className="component-heading">Your Pending Contracts</h2>
+                <div className="title-header">
+                    <h2 className="component-heading">Your Pending Contracts</h2>
+                    <button className="job-button">Search</button>
+                </div>
                 {
                     props.pendingContracts && props.pendingContracts.map((contract) => {
                         return(
@@ -53,7 +56,10 @@ export default function AllContracts(props) {
             </div>
             :
             <div className="alljobs">
-                <h2 className="component-heading">Your Signed Contracts</h2>
+                <div className="title-header">
+                    <h2 className="component-heading">Your Signed Contracts</h2>
+                    <button className="job-button">Search</button>
+                </div>
                 {
                     props.signedContracts && props.signedContracts.map((contract) => {
                         return(

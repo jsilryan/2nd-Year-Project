@@ -4,8 +4,10 @@ from models import Job, Client, Painter, Proposal, Contract
 from flask_jwt_extended import (JWTManager, create_access_token, 
 create_refresh_token, jwt_required, get_jwt_identity
 )
-from datetime import datetime
+from datetime import datetime, time
 import random
+import requests
+import pytz
 
 contract_ns = Namespace("contract", description = "Contract Creation")
 
@@ -13,9 +15,13 @@ contract_model = contract_ns.model (
     "Contract Details",
     {
         "contract_short_code" : fields.String(),
-        "payment_amount" : fields.String(),
+        "total_payment_amount" : fields.String(),
         "client_sign" : fields.Boolean(),
         "painter_sign" : fields.Boolean(),
+        "materials" : fields.String(),
+        "exterior_lumpsum" : fields.String(),
+        "interior_preparation" : fields.String(),
+        "interior_finishing" :fields.String(),
         "signed" : fields.Boolean(),
         "signed_at" : fields.DateTime(),
         "job_id" : fields.Integer(),
@@ -23,7 +29,9 @@ contract_model = contract_ns.model (
         "client_first_name" : fields.String(),
         "client_last_name" : fields.String(),
         "painter_first_name" : fields.String(),
-        "painter_last_name" : fields.String()
+        "painter_last_name" : fields.String(),
+        "painter_number" : fields.String(),
+        "client_number" : fields.String()
     }
 )
 
@@ -53,8 +61,31 @@ class Create_Contract(Resource):
         while (db_contract is not None):
             code = random.choices(char_list, k=4)
             code = "".join(code)
+        ip_address = request.remote_addr
+        latitude = data.get('lat')
+        longitude = data.get('long')
+
+        if latitude and longitude:
+            # get the user's timezone based on their GPS coordinates
+            timezone_response = requests.get(f'https://maps.googleapis.com/maps/api/timezone/json?location={latitude},{longitude}&timestamp={int(datetime.now().timestamp())}&key=AIzaSyCVgCH0d4vmVmtmRRD1PdTlkDYFBndKJcg')
+            timezone_data = timezone_response.json()
+            timezone_name = timezone_data['timeZoneId']
+        elif ip_address:
+            # get the user's location based on their IP address
+            response = requests.get(f'https://ipapi.co/{ip_address}/json/')
+            location = response.json()
+            try:
+                timezone_name = location['timezone']
+            except:
+                timezone_name = 'Africa/Nairobi'
+        else:
+            # use a default timezone if location information is not available
+            timezone_name = 'Africa/Nairobi'
+
+        # set the timezone for the current datetime object
+        local_tz = pytz.timezone(timezone_name)
         
-        new_date = datetime.now()
+        new_date = datetime.now(local_tz)
         signed_at = datetime.strptime(new_date.strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S')
 
         all_contracts = Contract.query.all()
@@ -82,12 +113,84 @@ class Create_Contract(Resource):
             if selected_proposal > 0:
                 new_contract = Contract (
                     contract_short_code = code,
-                    payment_amount = data.get("payment_amount"),
+                    materials = data.get("materials"),
+                    exterior_lumpsum = data.get("exterior_lumpsum"),
+                    interior_preparation = data.get("interior_preparation"),
+                    interior_finishing = data.get("interior_finishing"),
+                    total_payment_amount = data.get("total_payment_amount"),
                     client_sign = data.get("client_sign"),
                     signed_at = signed_at,
                     job_id = job.id
                 )
                 new_contract.save()
+                # if job.contract_type == "Contract_Type.labour":
+                #     if job.job_type == "Job_Type.exterior":
+                #         new_contract = Contract (
+                #             contract_short_code = code,
+                #             total_payment_amount = data.get("total_payment_amount"),
+                #             client_sign = data.get("client_sign"),
+                #             exterior_lumpsum = data.get("exterior_lumpsum"),
+                #             signed_at = signed_at,
+                #             job_id = job.id
+                #         )
+                #     elif job.job_type == "Job_Type.interior":
+                #         new_contract = Contract (
+                #             contract_short_code = code,
+                #             interior_preparation = data.get("interior_preparation"),
+                #             interior_finishing = data.get("interior_finishing"),
+                #             total_payment_amount = data.get("total_payment_amount"),
+                #             client_sign = data.get("client_sign"),
+                #             signed_at = signed_at,
+                #             job_id = job.id
+                #         )
+                #     else:
+                #         new_contract = Contract (
+                #             contract_short_code = code,
+                #             exterior_lumpsum = data.get("exterior_lumpsum"),
+                #             interior_preparation = data.get("interior_preparation"),
+                #             interior_finishing = data.get("interior_finishing"),
+                #             total_payment_amount = data.get("total_payment_amount"),
+                #             client_sign = data.get("client_sign"),
+                #             signed_at = signed_at,
+                #             job_id = job.id
+                #         )
+                #     new_contract.save()
+                # else: 
+                #     if job.job_type == "Job_Type.exterior":
+                #         new_contract = Contract (
+                #             contract_short_code = code,
+                #             materials = data.get("materials"),
+                #             total_payment_amount = data.get("total_payment_amount"),
+                #             client_sign = data.get("client_sign"),
+                #             exterior_lumpsum = data.get("exterior_lumpsum"),
+                #             signed_at = signed_at,
+                #             job_id = job.id
+                #         )
+                #     elif job.job_type == "Job_Type.interior":
+                #         new_contract = Contract (
+                #             contract_short_code = code,
+                #             materials = data.get("materials"),
+                #             interior_preparation = data.get("interior_preparation"),
+                #             interior_finishing = data.get("interior_finishing"),
+                #             total_payment_amount = data.get("total_payment_amount"),
+                #             client_sign = data.get("client_sign"),
+                #             signed_at = signed_at,
+                #             job_id = job.id
+                #         )
+                #     else:
+                #         new_contract = Contract (
+                #             contract_short_code = code,
+                #             materials = data.get("materials"),
+                #             exterior_lumpsum = data.get("exterior_lumpsum"),
+                #             interior_preparation = data.get("interior_preparation"),
+                #             interior_finishing = data.get("interior_finishing"),
+                #             payment_amount = data.get("payment_amount"),
+                #             client_sign = data.get("client_sign"),
+                #             signed_at = signed_at,
+                #             job_id = job.id
+                #         )
+                #     new_contract.save()
+                
                 response = make_response(jsonify({
                     "message" : "Contract created successfully."
                 }))
@@ -182,20 +285,127 @@ class Modify_Contract(Resource):
             }))
             return response
 
+        job_id = contract_update.job_id
+        job = Job.query.filter_by(id = job_id).first()
+
         if db_client:
             data = request.get_json()
             if contract_update.signed == False:
-                if data.get("payment_amount") != contract_update.payment_amount:
+                if data.get("total_payment_amount") != contract_update.total_payment_amount:
                     contract_update.painter_sign = False
-                    contract_update.client_update(
-                        data.get("payment_amount"),
+                    contract_update.client_material_both_update(
+                        data.get("materials"),
+                        data.get("exterior_lumpsum"),
+                        data.get("interior_preparation"),
+                        data.get("interior_finishing"),
+                        data.get("total_payment_amount"),
                         data.get("client_sign")
                     )
+
                 else:
-                    contract_update.client_update(
-                        data.get("payment_amount"),
+                    contract_update.client_material_both_update(
+                        data.get("materials"),
+                        data.get("exterior_lumpsum"),
+                        data.get("interior_preparation"),
+                        data.get("interior_finishing"),
+                        data.get("total_payment_amount"),
                         data.get("client_sign")
                     )
+                #     if job.contract_type == "Contract_Type.labour":
+                #         if job.job_type == "Job_Type.exterior":
+                #             contract_update.client_exterior_update(
+                #                 data.get("exterior_lumpsum"),
+                #                 data.get("total_payment_amount"),
+                #                 data.get("client_sign")
+                #             )
+                #         elif job.job_type == "Job_Type.interior":
+                #             contract_update.client_interior_update(
+                #                 data.get("interior_preparation"),
+                #                 data.get("interior_finishing"),
+                #                 data.get("total_payment_amount"),
+                #                 data.get("client_sign")
+                #             )
+                #         else:
+                #             contract_update.client_both_update(
+                #                 data.get("exterior_lumpsum"),
+                #                 data.get("interior_preparation"),
+                #                 data.get("interior_finishing"),
+                #                 data.get("total_payment_amount"),
+                #                 data.get("client_sign")
+                #             )
+                #     else:
+                #         if job.job_type == "Job_Type.exterior":
+                #             contract_update.client_material_exterior_update(
+                #                 data.get("materials"),
+                #                 data.get("exterior_lumpsum"),
+                #                 data.get("total_payment_amount"),
+                #                 data.get("client_sign")
+                #             )
+                #         elif job.job_type == "Job_Type.interior":
+                #             contract_update.client_material_interior_update(
+                #                 data.get("materials"),
+                #                 data.get("interior_preparation"),
+                #                 data.get("interior_finishing"),
+                #                 data.get("total_payment_amount"),
+                #                 data.get("client_sign")
+                #             )
+                #         else:
+                #             contract_update.client_material_both_update(
+                #                 data.get("materials"),
+                #                 data.get("exterior_lumpsum"),
+                #                 data.get("interior_preparation"),
+                #                 data.get("interior_finishing"),
+                #                 data.get("total_payment_amount"),
+                #                 data.get("client_sign")
+                #             )
+                # else:
+                #     if job.contract_type == "Contract_Type.labour":
+                #         if job.job_type == "Job_Type.exterior":
+                #             contract_update.client_exterior_update(
+                #                 data.get("exterior_lumpsum"),
+                #                 data.get("total_payment_amount"),
+                #                 data.get("client_sign")
+                #             )
+                #         elif job.job_type == "Job_Type.interior":
+                #             contract_update.client_interior_update(
+                #                 data.get("interior_preparation"),
+                #                 data.get("interior_finishing"),
+                #                 data.get("total_payment_amount"),
+                #                 data.get("client_sign")
+                #             )
+                #         else:
+                #             contract_update.client_both_update(
+                #                 data.get("exterior_lumpsum"),
+                #                 data.get("interior_preparation"),
+                #                 data.get("interior_finishing"),
+                #                 data.get("total_payment_amount"),
+                #                 data.get("client_sign")
+                #             )
+                #     else:
+                #         if job.job_type == "Job_Type.exterior":
+                #             contract_update.client_material_exterior_update(
+                #                 data.get("materials"),
+                #                 data.get("exterior_lumpsum"),
+                #                 data.get("total_payment_amount"),
+                #                 data.get("client_sign")
+                #             )
+                #         elif job.job_type == "Job_Type.interior":
+                #             contract_update.client_material_interior_update(
+                #                 data.get("materials"),
+                #                 data.get("interior_preparation"),
+                #                 data.get("interior_finishing"),
+                #                 data.get("total_payment_amount"),
+                #                 data.get("client_sign")
+                #             )
+                #         else:
+                #             contract_update.client_material_both_update(
+                #                 data.get("materials"),
+                #                 data.get("exterior_lumpsum"),
+                #                 data.get("interior_preparation"),
+                #                 data.get("interior_finishing"),
+                #                 data.get("total_payment_amount"),
+                #                 data.get("client_sign")
+                #             )
             else:
                 response = make_response(jsonify({
                     "message" : "Cannot edit a signed contract."
@@ -217,7 +427,30 @@ class Modify_Contract(Resource):
            
 
         if (contract_update.client_sign == True and contract_update.painter_sign == True):  
-            new_date = datetime.now()
+            ip_address = request.remote_addr
+            latitude = data.get('lat')
+            longitude = data.get('long')
+
+            if latitude and longitude:
+                # get the user's timezone based on their GPS coordinates
+                timezone_response = requests.get(f'https://maps.googleapis.com/maps/api/timezone/json?location={latitude},{longitude}&timestamp={int(datetime.now().timestamp())}&key=AIzaSyCVgCH0d4vmVmtmRRD1PdTlkDYFBndKJcg')
+                timezone_data = timezone_response.json()
+                timezone_name = timezone_data['timeZoneId']
+            elif ip_address:
+                # get the user's location based on their IP address
+                response = requests.get(f'https://ipapi.co/{ip_address}/json/')
+                location = response.json()
+                try:
+                    timezone_name = location['timezone']
+                except:
+                    timezone_name = 'Africa/Nairobi'
+            else:
+                # use a default timezone if location information is not available
+                timezone_name = 'Africa/Nairobi'
+
+            # set the timezone for the current datetime object
+            local_tz = pytz.timezone(timezone_name)
+            new_date = datetime.now(local_tz)
             signed_at = datetime.strptime(new_date.strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S')
             #Update signed and signed_at fields
             contract_update.update_signing_info(
@@ -232,18 +465,18 @@ class Modify_Contract(Resource):
             start_date = datetime.strptime(start_date_str.strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S')
 
             #Make the starting date the current date
-            job_update.update (
-                job.job_name,
-                job.job_description,
-                job.property_location,
-                job.property_type,
-                job.job_type,
-                job.total_floors, 
-                job.total_rooms, 
-                start_date,
-                job.end_date,
-                job.max_proposals
-            )
+            # job_update.update (
+            #     job.job_name,
+            #     job.job_description,
+            #     job.property_location,
+            #     job.property_type,
+            #     job.job_type,
+            #     job.total_floors, 
+            #     job.total_rooms, 
+            #     start_date,
+            #     job.end_date,
+            #     job.max_proposals
+            # )
             client_id = job.client_id
             proposals = Proposal.query.all()
             for x in range(0, len(proposals)):
@@ -255,7 +488,7 @@ class Modify_Contract(Resource):
             client = Client.query.filter_by(id = client_id).first()
             painter = Painter.query.filter_by(id = painter_id).first()
             response = make_response(jsonify({
-                "message" : f"Contract {contract_short_code} between {client.first_name} {client.last_name} and {painter.first_name} {painter.last_name} has been made at {contract_update.signed_at} for {contract_update.payment_amount}." 
+                "message" : f"Contract {contract_short_code} between {client.first_name} {client.last_name} and {painter.first_name} {painter.last_name} has been made at {contract_update.signed_at} for {contract_update.total_payment_amount}." 
             }))
         else:
             response = make_response(jsonify({
@@ -300,7 +533,7 @@ class Modify_Contract(Resource):
             if proposals[x].job_id == current_job.id:
                 job_proposals.append(proposals[x])
         for x in range(0, len(job_proposals)):
-            if job_proposals[x].proposal_confirmed == True:
+            if job_proposals[x].proposal_selection == True:
                 confirmed_proposal = job_proposals[x]
 
         painter_id = confirmed_proposal.painter_id
@@ -309,11 +542,12 @@ class Modify_Contract(Resource):
         if contract:
             contract_dict = contract.__dict__
             contract_dict["job_short_code"] = current_job.job_short_code
-            if contract.signed == True:
-                contract_dict["client_first_name"] = client.first_name
-                contract_dict["client_last_name"] = client.last_name
-                contract_dict["painter_first_name"] = painter.first_name
-                contract_dict["painter_last_name"] = painter.last_name
+            contract_dict["client_first_name"] = client.first_name
+            contract_dict["client_last_name"] = client.last_name
+            contract_dict["painter_first_name"] = painter.first_name
+            contract_dict["painter_last_name"] = painter.last_name
+            contract_dict["painter_number"] = painter.phone_number
+            contract_dict["client_number"] = client.phone_number
             return contract_dict
         else:
             response = []

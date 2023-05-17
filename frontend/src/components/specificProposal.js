@@ -5,6 +5,7 @@ import UpdateProposal from "../painter/updateProposal"
 import DeleteProposal from "../painter/deleteProposal"
 import SelectProposal from "../client/selectProposal"
 import CreateContract from "../client/createContract"
+import Portfolio from "../painter/painterPortfolio"
 
 export default function SpecificProposal(props) {
     const [proposal, setProposal] = React.useState()
@@ -122,131 +123,147 @@ export default function SpecificProposal(props) {
         setOnSelect(false)
     }
 
+    const [profile, setProfile] = React.useState(false)
+
+    function openProfile() {
+        setProfile(true)
+    }
+    function closeProfile() {
+        setProfile(false)
+    }
+
     const jobStyle = (!onDelete && !onSelect) ? "job" : "job-opaque"
     const jobDisplay = (!onDelete && !onSelect) ? "job_display" : "job_display_opaque"
     const sideDisplay = (!onDelete && !onSelect) ? "side" : "side_opaque"
     const tryStyle = (!onDelete && !onSelect) ? "try" : "try-opaque"
 
     return (
-        <div className={tryStyle}>
+        <div>
         {
-        !showJob && !showContract ?
-        <div className="show-update">
-            <div className={jobStyle}>
-                <div className={sideDisplay}>
-                    <AiIcons.AiOutlineClose className="close" onClick ={props.closeProposal}/>
-                    {
-                    props.user === "Painter" ? 
-                    <div className="updateJob">
+        !profile ?
+            <div className={tryStyle}>
+            {
+            !showJob && !showContract ?
+            <div className="show-update">
+                <div className={jobStyle}>
+                    <div className={sideDisplay}>
+                        <AiIcons.AiOutlineClose className="close" onClick ={props.closeProposal}/>
                         {
-                        proposal && !proposal.proposal_selection && !proposal.proposal_confirmed &&
-                        <div>
-                            <div className="delete">
-                                <button onClick = {showMod} className="home-link2">Update Proposal</button>
-                            </div>
-                            <div className="delete">
-                                <button onClick = {openDelete} className="home-link2">Delete Proposal</button>
-                            </div>
-                        </div>
-                        }
-                        <div className="delete" onClick={() => dispJob(proposal.job_short_code)}>
-                            <button className="home-link2">Job Details</button>
-                        </div>
-                    </div>
-                    :
-                    <div className="updateJob">
-                        {
-                        !selected ?
-                        <div className="delete">
-                            <button onClick = {openSelect} className="home-link2">Select Proposal</button>
-                        </div>
-                        :
-                        <div>
+                        props.user === "Painter" ? 
+                        <div className="updateJob">
                             {
-                            !proposal.proposal_confirmed &&
+                            proposal && !proposal.proposal_selection && !proposal.proposal_confirmed &&
                             <div>
-                                <div className="delete" onClick={() => dispContract(proposal.job_short_code)}>
-                                    <button className="home-link2">Create Contract</button>
+                                <div className="delete">
+                                    <button onClick = {showMod} className="home-link2">Update Proposal</button>
                                 </div>
                                 <div className="delete">
-                                    <button onClick = {openSelect} className="home-link2">Deselect Proposal</button>
+                                    <button onClick = {openDelete} className="home-link2">Delete Proposal</button>
                                 </div>
                             </div>
                             }
+                            <div className="delete" onClick={() => dispJob(proposal.job_short_code)}>
+                                <button className="home-link2">Job Details</button>
+                            </div>
+                        </div>
+                        :
+                        <div className="updateJob">
                             {
-                                props.location && props.location === "selectedProposal" &&
-                                <div className="delete" onClick={() => dispJob(proposal.job_short_code)}>
-                                    <button className="home-link2">Job Details</button>
+                            !selected ?
+                            <div className="delete">
+                                <button onClick = {openSelect} className="home-link2">Select Proposal</button>
+                            </div>
+                            :
+                            <div>
+                                {
+                                !proposal.proposal_confirmed &&
+                                <div>
+                                    <div className="delete" onClick={() => dispContract(proposal.job_short_code)}>
+                                        <button className="home-link2">Create Contract</button>
+                                    </div>
+                                    <div className="delete">
+                                        <button onClick = {openSelect} className="home-link2">Deselect Proposal</button>
+                                    </div>
                                 </div>
+                                }
+                                {
+                                    props.location && props.location === "selectedProposal" &&
+                                    <div className="delete" onClick={() => dispJob(proposal.job_short_code)}>
+                                        <button className="home-link2">Job Details</button>
+                                    </div>
+                                }
+                            </div>
+                            }
+                            {
+                            !props.location &&
+                            <div className="delete">
+                                <button className="home-link2" onClick = {openProfile}>Painter Profile</button>
+                            </div>
                             }
                         </div>
-                        }
-                        {
-                        !props.location &&
-                        <div className="delete">
-                            <button className="home-link2">Painter Profile</button>
-                        </div>
+
                         }
                     </div>
-
+                    {
+                    proposal &&
+                    <div className={jobDisplay}>
+                        <div className="header">
+                            <h2>Proposal Details</h2>
+                        </div>
+                        <div className='job_interior'>
+                            <div className="job-details">
+                                <div className="job-info">
+                                    <h3>Proposal Name: </h3>
+                                    <p>{proposal.proposal_name}</p>
+                                </div>
+                                <div className="job-info">
+                                    <h3>Proposal Description: </h3>
+                                    <p>{proposal.proposal_description}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="page-link">
+                            {
+                                selected ? 
+                                <h4 className="conf" style={conf_styles}>Selected</h4>
+                                :
+                                <h4 className="conf" style={conf_styles}>Not Selected</h4>
+                                }
+                                {
+                                confirmed ?
+                                <h4 className="comp" style={comp_styles}>Confirmed</h4>
+                                :
+                                <h4 className="conf" style={comp_styles}>Not Confirmed</h4>
+                                }
+                        </div> 
+                    </div>
+                    }
+                    {
+                        onSelect &&
+                        <SelectProposal code = {code} back = {closeSelect} token = {token} handleClick = {props.closeProposal}
+                            onRefresh = {props.onRefresh} selected = {selected} dispContract = {dispContract} jsc = {proposal.job_short_code}
+                        />
+                    }
+                    {
+                        onDelete &&
+                        <DeleteProposal code = {code} back = {closeDelete} token = {token} handleClick = {props.closeProposal} 
+                            onRefresh = {props.onRefresh} 
+                        />
                     }
                 </div>
-                {
-                proposal &&
-                <div className={jobDisplay}>
-                    <div className="header">
-                        <h2>Proposal Details</h2>
-                    </div>
-                    <div className='job_interior'>
-                        <div className="job-details">
-                            <div className="job-info">
-                                <h3>Proposal Name: </h3>
-                                <p>{proposal.proposal_name}</p>
-                            </div>
-                            <div className="job-info">
-                                <h3>Proposal Description: </h3>
-                                <p>{proposal.proposal_description}</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="page-link">
-                        {
-                            selected ? 
-                            <h4 className="conf" style={conf_styles}>Selected</h4>
-                            :
-                            <h4 className="conf" style={conf_styles}>Not Selected</h4>
-                            }
-                            {
-                            confirmed ?
-                            <h4 className="comp" style={comp_styles}>Confirmed</h4>
-                            :
-                            <h4 className="conf" style={comp_styles}>Not Confirmed</h4>
-                            }
-                    </div> 
-                </div>
-                }
-                {
-                    onSelect &&
-                    <SelectProposal code = {code} back = {closeSelect} token = {token} handleClick = {props.closeProposal}
-                        onRefresh = {props.onRefresh} selected = {selected} dispContract = {dispContract} jsc = {proposal.job_short_code}
-                    />
-                }
-                {
-                    onDelete &&
-                    <DeleteProposal code = {code} back = {closeDelete} token = {token} handleClick = {props.closeProposal} 
-                        onRefresh = {props.onRefresh} 
-                    />
-                }
             </div>
-        </div>
-        :
-        showContract ?
-        <CreateContract handleClick = {hideContract} jsc = {jobShortCode}/> 
-        :
-        props.openModal ?
-        <UpdateProposal closeModal = {closeModal} onProposalRefresh ={refProposalOn} code = {code} proposal = {proposal} onRefresh = {props.onRefresh}/> 
-        :
-        <SpecificJob handleClick={hideJob} jsc={jobShortCode} user = {props.user} location = {location}/>
+            :
+            showContract ?
+            <CreateContract handleClick = {hideContract} jsc = {jobShortCode}/> 
+            :
+            props.openModal ?
+            <UpdateProposal closeModal = {closeModal} onProposalRefresh ={refProposalOn} code = {code} proposal = {proposal} onRefresh = {props.onRefresh}/> 
+            :
+            <SpecificJob handleClick={hideJob} jsc={jobShortCode} user = {props.user} location = {location}/>
+            }
+            </div>
+            :
+            <Portfolio close = {closeProfile} code = {props.psc} user = {"Client"}/>
         }
         </div>
     )

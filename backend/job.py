@@ -5,8 +5,10 @@ from flask_jwt_extended import (JWTManager, create_access_token,
 create_refresh_token, jwt_required, get_jwt_identity
 )
 from django.shortcuts import get_object_or_404
-from datetime import datetime, time
+from datetime import datetime, time, timedelta, date
 import random
+import requests
+import pytz
 
 job_ns = Namespace("job", description = "Job Creation") 
 
@@ -19,6 +21,7 @@ job_model = job_ns.model(
         "property_location" : fields.String(),
         "property_type" : fields.String(),
         "job_type" : fields.String(),
+        "contract_type" : fields.String(),
         "total_floors" : fields.Integer(),
         "total_rooms" : fields.Integer(),
         "start_date" : fields.Date(),
@@ -61,7 +64,32 @@ class Client_Jobs_Details(Resource):
 
         end_date_str = data.get("end_date")
         end_date = datetime.strptime(end_date_str, '%Y-%m-%d')
+        #Get job created at
+        ip_address = request.remote_addr
+        latitude = data.get('lat')
+        longitude = data.get('long')
 
+        if latitude and longitude:
+            # get the user's timezone based on their GPS coordinates
+            timezone_response = requests.get(f'https://maps.googleapis.com/maps/api/timezone/json?location={latitude},{longitude}&timestamp={int(datetime.now().timestamp())}&key=AIzaSyCVgCH0d4vmVmtmRRD1PdTlkDYFBndKJcg')
+            timezone_data = timezone_response.json()
+            timezone_name = timezone_data['timeZoneId']
+        elif ip_address:
+            # get the user's location based on their IP address
+            response = requests.get(f'https://ipapi.co/{ip_address}/json/')
+            location = response.json()
+            try:
+                timezone_name = location['timezone']
+            except:
+                timezone_name = 'Africa/Nairobi'
+        else:
+            # use a default timezone if location information is not available
+            timezone_name = 'Africa/Nairobi'
+        # set the timezone for the current datetime object
+        local_tz = pytz.timezone(timezone_name)
+
+        # set the client_created_at column with the current datetime object in the user's local timezone
+        job_created_at=datetime.now(local_tz)
         new_job = Job (
             job_short_code = code,
             job_name = data.get("job_name"),
@@ -69,11 +97,13 @@ class Client_Jobs_Details(Resource):
             property_location = data.get("property_location"),
             property_type = data.get("property_type"),
             job_type = data.get("job_type"),
+            contract_type = data.get("contract_type"),
             total_floors = data.get("total_floors"), 
             total_rooms = data.get("total_rooms"), 
             start_date = start_date,
             end_date = end_date,
             max_proposals = data.get("max_proposals"),
+            job_created_at = job_created_at,
             client_id = current_client.id
         )
 
@@ -94,11 +124,12 @@ class Client_Jobs_Details(Resource):
         jobs = Job.query.all()
         client_jobs = []
         #Check if Client ID is the same as the client ID in the job
-        for x in range(0, len(jobs)):
-            if (current_client.id == jobs[x].client_id):
-                client_jobs.append(jobs[x])
+        if (current_client):
+            for x in range(0, len(jobs)):
+                if (current_client.id == jobs[x].client_id):
+                    client_jobs.append(jobs[x])
 
-        return client_jobs
+            return client_jobs
 
 
 @job_ns.route("/painter/jobs")
@@ -127,35 +158,53 @@ class Painter_Jobs_Details(Resource):
                 painter_proposals.append(proposals[x])
 
         # if proposals:
-        for x in range(0, len(jobs)):
-            individual_job_proposals = []
-            for x in range(0, len(proposals)):
-                if(jobs[x].id == proposals[x].job_id):
-                    individual_job_proposals.append(proposals[x])
-            job_proposals.append(individual_job_proposals)
+        if proposals:
+            for x in range(0, len(jobs)):
+                individual_job_proposals = []
+                for y in range(0, len(proposals)):
+                    if(jobs[x].id == proposals[y].job_id):
+                        individual_job_proposals.append(proposals[y])
+                job_proposals.append(individual_job_proposals)
 
         # Get the current datetime
         now = datetime.now()
 
-        #Display only jobs whose maximum number of proposals have not been reached and the end_date has not passed the current date
+        MONTH_LIMIT = 30
+        #Display only jobs whose maximum number of proposals have not been reached, those that are not confirmed, 
+        #those whose end_date is less than or equal to today's date and the job is not more than 1 month of posting
         for x in range(0, len(jobs)):
-            other_date = datetime.combine(jobs[x].end_date, time())
+            other_date = datetime.combine(jobs[x].start_date, datetime.min.time())
             time_difference = now - other_date
-            if (len(job_proposals[x]) < jobs[x].max_proposals and jobs[x].job_confirmed != True and time_difference.total_seconds()  > 0):
-                if (current_painter.area == jobs[x].property_location):
-                    close_jobs.append(jobs[x]) 
-                    
+            if (job_proposals):
+                if (len(job_proposals[x]) < jobs[x].max_proposals and jobs[x].job_confirmed != True 
+                and time_difference < timedelta(days=MONTH_LIMIT) and jobs[x].end_date <= date.today()):
+                    if (current_painter.area == jobs[x].property_location):
+                        close_jobs.append(jobs[x]) 
+            else:
+                if (time_difference < timedelta(days=MONTH_LIMIT)):
+                    if (current_painter.area == jobs[x].property_location):
+                        close_jobs.append(jobs[x])    
         #Create some randomness in the order
         random.shuffle(close_jobs)
         far_jobs = []
         for x in range(0, len(jobs)):
-            if (len(job_proposals[x]) < jobs[x].max_proposals and jobs[x].job_confirmed != True):
-                if len(close_jobs) > 0:
-                    if (jobs[x] not in close_jobs):
+            other_date = datetime.combine(jobs[x].start_date, datetime.min.time())
+            time_difference = now - other_date
+            if (job_proposals):
+                if (len(job_proposals[x]) < jobs[x].max_proposals and jobs[x].job_confirmed != True and time_difference < timedelta(days=MONTH_LIMIT)):
+                    if len(close_jobs) > 0:
+                        if (jobs[x] not in close_jobs):
+                            far_jobs.append(jobs[x])
+                    else:
                         far_jobs.append(jobs[x])
-                    
-                else:
-                    far_jobs.append(jobs[x])
+            else:
+                if (time_difference < timedelta(days=MONTH_LIMIT)):
+                    if len(close_jobs) > 0:
+                        if (jobs[x] not in close_jobs):
+                            far_jobs.append(jobs[x])
+                    else:
+                        far_jobs.append(jobs[x])
+
         random.shuffle(far_jobs)
         for i in range(0, len(far_jobs)):
             close_jobs.append(far_jobs[i])
@@ -231,6 +280,7 @@ class Update_Job(Resource):
             data.get("property_location"),
             data.get("property_type"),
             data.get("job_type"),
+            data.get("contract_type"),
             data.get("total_floors"), 
             data.get("total_rooms"), 
             start_date,

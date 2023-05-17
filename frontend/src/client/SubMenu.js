@@ -10,13 +10,14 @@ export default function Submenu(props) {
     }
 
     return (
-        <div>
+        <div
+            onMouseEnter={props.item.subnav && showSubnav }
+            onMouseLeave={props.item.subnav && showSubnav }
+        >
             <Link className="sidebar-link" to={props.item.path} 
-                onClick={props.getPage ?
-                    props.goToLogin :
-                    props.item.subnav && showSubnav
+                onClick={props.getPage &&
+                    props.goToLogin 
                 } 
-                
             >
                 <div>
                     {props.item.icon}

@@ -91,7 +91,7 @@ export default function AllProposals(props) {
         <div style={styles}>
             {
                 proposalNumber === 0 ?
-                <main className="empty-main" style={styles}>
+                <main className="empty-main">
                     <h2 className="empty-h2">You have 0 proposals.</h2>
                 </main>
                 :
@@ -101,12 +101,17 @@ export default function AllProposals(props) {
                     <div className="alljobs">
                         {
                         props.user === "Client" ?
-                        <div className="proposal-header">
+                        <div className="title-header">
                             <h2 className="component-heading">Job {code} Proposals</h2>
-                            <AiIcons.AiOutlineClose className="close" onClick ={props.handleClick}/>
+                            <div className="job-button">
+                                <AiIcons.AiOutlineClose className="close" onClick ={props.handleClick}/>
+                            </div>
                         </div>
                         :
-                        <h2 className="component-heading">Your Proposals</h2>
+                        <div className="title-header">
+                            <h2 className="component-heading">Your Proposals</h2>
+                            <button className="job-button">Search</button>
+                        </div>
                         }   
                         {
                             proposals && proposals.map((proposal) => {

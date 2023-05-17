@@ -5,10 +5,7 @@ import SpecificJob from "./specificJob"
 export default function AllJobs(props) {
     let left = props.sidebar ? "250px" : "auto"
     const styles = {
-        marginLeft: left,
-        backgroundColor: "#f1f1f1",
-        height: "100vh",
-        overflow: "auto"
+        marginLeft: left
     }
 
     const [showJob, setShowJob] = React.useState(false)
@@ -34,7 +31,7 @@ export default function AllJobs(props) {
     }
 
     const newlocation = "jobs"
-
+    console.log(props.jobs)
     return (
         <div style={styles} >
         {
@@ -43,13 +40,27 @@ export default function AllJobs(props) {
                 {
                 props.location !== "confirmed" && props.location !== "completed" ?
                 props.user === "Client" ?
-                <h2 className="component-heading">Your Jobs</h2>
+                <div className="title-header">
+                    <h2 className="component-heading">Your Jobs</h2>
+                    <button className="job-button">Search</button>
+                </div>
                 :
-                <h2 className="component-heading">Bid Jobs</h2>
+                <div className="title-header">
+                    <h2 className="component-heading">Bid Jobs</h2>
+                    <button className="job-button">Search</button>
+                </div>
                 :
                 props.location === "confirmed" ?
-                <h2 className="component-heading">Ongoing Jobs</h2> :
-                <h2 className="component-heading">Completed Jobs</h2>
+                <div className="title-header">
+                    <h2 className="component-heading">Ongoing Jobs</h2> 
+                    <button className="job-button">Search</button>
+                </div>
+                :
+                <div className="title-header">
+                    <h2 className="component-heading">Completed Jobs</h2>
+                    <button className="job-button">Search</button>
+                </div>
+                
                 }   
                 {
                     props.jobs && props.jobs.map((job) => {
@@ -62,7 +73,7 @@ export default function AllJobs(props) {
                     })
                 }
             </div>
-            :
+            : 
             <SpecificJob handleClick={hideJob} jsc={jobShortCode} user = {props.user} showModal = {showModal} 
                 closeModal = {setOpenModal} openModal = {openModal} className="alljobs" 
                 onRefresh = {props.onRefresh} offRefresh = {props.offRefresh}

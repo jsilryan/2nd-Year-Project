@@ -8,6 +8,7 @@ export default function ClientSignup(props) {
         first_name: "",
         last_name: "",
         gender: "",
+        phoneNumber: "",
         email: "",
         password: "",
         confirm_password: ""
@@ -33,6 +34,8 @@ export default function ClientSignup(props) {
     const [lenEmail, setLenEmail] = React.useState(true)
     const [lenFName, setLenFName] = React.useState(true)
     const [lenLName, setLenLName] = React.useState(true)
+    const [lenPhone, setLenPhone] = React.useState(true)
+    const [checkPhone, setCheckPhone] = React.useState(true)
     const [correctEntry, setCorrectEntry] = React.useState(false)
 
     const styles = {
@@ -53,6 +56,9 @@ export default function ClientSignup(props) {
         if (clientForm.gender === "") {
             empty.push("gender")
         } 
+        if (clientForm.phoneNumber === "") {
+            empty.push("phoneNumber")
+        } 
         if (clientForm.email === "") {
             empty.push("email")
         } 
@@ -64,6 +70,9 @@ export default function ClientSignup(props) {
         } 
         setEmpty(empty)
     }
+
+    const first5 = clientForm.phoneNumber.slice(0, 5)
+    const first2 = clientForm.phoneNumber.slice(0, 2)
 
     React.useEffect(
         () => {
@@ -83,6 +92,14 @@ export default function ClientSignup(props) {
             if (clientForm.password === clientForm.confirm_password) {
                 setCheckPass(true)
             }
+            if (((first2 === "07" || first2 === "01") && clientForm.phoneNumber.length === 10) || 
+            ((first5 === "+2547" || first5 === "+2541") && clientForm.phoneNumber.length === 13)) {
+                setLenPhone(true)
+            }
+            if (first2 === "07" || first2 === "01" || first5 === "+2547" || first5 === "+2541")
+            {
+                setCheckPhone(true)
+            }
         }, [clientForm]
     )
 
@@ -100,7 +117,20 @@ export default function ClientSignup(props) {
                         {
                             if (clientForm.password === clientForm.confirm_password) 
                             {         
-                                setCorrectEntry(true)
+                                if (first2 === "07" || first2 === "01" || first5 === "+2547" || first5 === "+2541")
+                                {
+                                    if ((first2 === "07" || first2 === "01" && clientForm.phoneNumber.length === 10) || 
+                                    (first5 === "+2547" || first5 === "+2541" && clientForm.phoneNumber.length === 13)) {
+                                        setCorrectEntry(true)
+                                    } else {
+                                        alert ("Enter a valid phone number!")
+                                        setLenPhone(false)
+                                    }
+
+                                } else {
+                                    alert ("Enter a valid phone number!")
+                                    setCheckPhone(false)
+                                }
                             }
                             else {
                                 alert("Passwords do not match!")
@@ -148,6 +178,7 @@ export default function ClientSignup(props) {
             first_name: "",
             last_name: "",
             gender: "",
+            phoneNumber: "",
             email: "",
             password: "",
             confirm_password: ""
@@ -164,6 +195,7 @@ export default function ClientSignup(props) {
                 first_name : clientForm.first_name,
                 last_name : clientForm.last_name,
                 gender : clientForm.gender,
+                phone_number : clientForm.phoneNumber,
                 email : clientForm.email,
                 password : clientForm.password
             }
@@ -190,10 +222,10 @@ export default function ClientSignup(props) {
                     const alerts = data.message
                     alert(alerts)
                     if (data.message == "Client created successfully!") {
-                        navigate("/client/my-jobs")
+                        navigate("/login")
                         completeCSignup()
                         props.switchClient()
-                        props.handleClick()
+                        // props.handleClick()
                     }
 
                 })
@@ -230,7 +262,7 @@ export default function ClientSignup(props) {
                                 value = {clientForm.last_name}
                                 onChange={updateValues}
                                 className = "name"
-                                style = {(submittedEmpty.includes("last_name")) ? styles : null}
+                                style = {(submittedEmpty.includes("last_name") || !lenFName || !lenLName) ? styles : null}
                             />
                         </div>
                     </div>
@@ -298,6 +330,33 @@ export default function ClientSignup(props) {
                         (submittedEmpty.includes("gender")) && 
                         <br/>
                     }
+
+                    <input 
+                        id="phoneNumber" 
+                        type="phoneNumber" 
+                        placeholder="Phone Number" 
+                        name="phoneNumber" 
+                        value = {clientForm.phoneNumber}
+                        onChange={updateValues}
+                        style = {(submittedEmpty.includes("phoneNumber") || !lenPhone || !checkPhone) ? styles : null}
+                    />
+
+                    {
+                        (submittedEmpty.includes("phoneNumber")) && 
+                        <div>
+                            <span style={{color: "red"}}>Phone Number is required!</span>
+                        </div>
+                    }
+                    {
+                        (!lenPhone || !checkPhone) &&
+                        <div>
+                            <span style={{color: "red"}}>Enter valid phone number!</span>
+                        </div>
+                    }
+                    {
+                        (submittedEmpty.includes("phoneNumber") || !lenPhone || !checkPhone) && 
+                        <br/>
+                    }
                     
                     <input 
                         id="email" 
@@ -306,7 +365,7 @@ export default function ClientSignup(props) {
                         name="email" 
                         value = {clientForm.email}
                         onChange={updateValues}
-                        style = {(submittedEmpty.includes("email")) ? styles : null}
+                        style = {(submittedEmpty.includes("email") || !lenEmail) ? styles : null}
                     />
                     {
                         (submittedEmpty.includes("email")) && 

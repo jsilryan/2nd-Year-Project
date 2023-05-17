@@ -43,14 +43,17 @@ export default function PainterMain(props) {
     )
 
     const styles = {
-        marginLeft: left
+        marginLeft: left,
+        backgroundColor: "#f1f1f1",
+        height: "100vh",
+        overflow: "auto"
     }
 
     return (
-        <div>
+        <div style={styles}>
             {
                 jobNumber === 0 ?
-                <main className="empty-main" style={styles}>
+                <main className="empty-main">
                     <h2 className="empty-h2">There are no jobs to bid at the moment.</h2>
                 </main>
                 :

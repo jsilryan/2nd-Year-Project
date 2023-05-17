@@ -15,7 +15,10 @@ export default function ConfirmedJobs(props) {
         }
     }
     const styles = {
-        marginLeft: left
+        marginLeft: left,
+        backgroundColor: "#f1f1f1",
+        height: "100vh",
+        overflow: "auto"
     }
     const navigate = useNavigate() 
 
@@ -58,10 +61,10 @@ export default function ConfirmedJobs(props) {
     let location = "confirmed"
 
     return (
-        <div>
+        <div style={styles}>
             {
                 jobNumber === 0 ?
-                <main className="empty-main" style={styles}>
+                <main className="empty-main" >
                     <h2 className="empty-h2">You have 0 Ongoing jobs at the moment.</h2>
                 </main>
                 :

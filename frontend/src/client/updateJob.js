@@ -6,9 +6,11 @@ export default function UpdateJob(props) {
     const Prop_Location = props.job.property_location
     const Property_Type = props.job.property_type
     const Job_Type = props.job.job_type
+    const Contract_Type = props.job.contract_type
     const propLoc = Prop_Location ? Prop_Location.replace("Prop_Location.", "") : ''
     const propType = Property_Type ? Property_Type.replace("Property_Type.", "") : ''
     const jobType = Job_Type ? Job_Type.replace("Job_Type.", "") : ''
+    const contractType = Contract_Type ? Contract_Type.replace("Contract_Type.", "") : ''
 
     const [jobForm, setJobForm] = React.useState({
         jobName : props.job.job_name,
@@ -16,6 +18,7 @@ export default function UpdateJob(props) {
         propLocation : propLoc,
         propType : propType,
         jobType : jobType,
+        contractType : contractType,
         totalFloors : props.job.total_floors,
         totalRooms : props.job.total_rooms,
         startDate: props.job.start_date,
@@ -63,6 +66,9 @@ export default function UpdateJob(props) {
         }
         if (jobForm.jobType === "") {
             empty.push("jobType")
+        }
+        if (jobForm.contractType === "") {
+            empty.push("contractType")
         }
         if (jobForm.totalFloors === "") {
             empty.push("totalFloors")
@@ -131,6 +137,7 @@ export default function UpdateJob(props) {
             propLocation : "",
             propType : "",
             jobType : "",
+            contractType : "",
             totalFloors : "",
             totalRooms : "",
             startDate: "",
@@ -191,6 +198,7 @@ export default function UpdateJob(props) {
                 property_location: jobForm.propLocation,
                 property_type: jobForm.propType,
                 job_type: jobForm.jobType,
+                contract_type : jobForm.contractType,
                 total_floors: jobForm.totalFloors,
                 total_rooms: jobForm.totalRooms,
                 start_date: jobForm.startDate,
@@ -397,6 +405,36 @@ export default function UpdateJob(props) {
                             (submittedEmpty.includes("jobType")) && 
                             <br/>
                         }
+
+                    <fieldset
+                        style = {(submittedEmpty.includes("contractType")) ? styles : null}
+                    >
+                        <legend>Job Type</legend>
+                        <select
+                            id = "contractType"
+                            name = "contractType"
+                            value = {jobForm.contractType}
+                            onChange={updateValues}
+                            className="area"
+                            style = {(submittedEmpty.includes("contractType")) ? styles : null}
+                        >
+                            <option value="">--Choose--</option>
+                            <option value="Labour">Labour</option>
+                            <option value="Material">Material</option>
+                        </select>
+                    </fieldset>
+                    {
+                        (submittedEmpty.includes("contractType")) && 
+                        <div>
+                            <span style={{color: "red"}}>Contract Type is required!</span>
+                        </div>
+                    }
+
+                    {
+                        (submittedEmpty.includes("contractType")) && 
+                        <br/>
+                    }
+
 
                         <input 
                             id="totalFloors"

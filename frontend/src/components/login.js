@@ -123,12 +123,12 @@ export default function Login(props) {
                         navigate("/client/my-jobs")
                         completeLogin()
                         props.switchClient()
-                        props.handleClick()
+                        !props.userNavig && props.handleClick()
                     } else if (data.user === "Painter") {
                         navigate("/painter/bid-jobs")
                         completeLogin()
                         props.switchPainter()
-                        props.handleClick()
+                        !props.userNavig && props.handleClick()
                     } else if (data.message === "User does not exist!") {
                         alert("User does not exist!")
                     } else {

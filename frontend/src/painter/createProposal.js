@@ -47,12 +47,12 @@ export default function CreateProposal(props) {
         {
             if (proposalForm.proposalName.length <= 100)
             {
-                if (proposalForm.proposalDescription.length <= 1000)
+                if (proposalForm.proposalDescription.length <= 2500)
                 {
                     setCorrectEntry(true)
                 }
                 else {
-                    alert("Proposal Description Date has to be below 1000 characters")
+                    alert("Proposal Description has to be below 2500 characters")
                     setLenDesc(false)
                 }
             } else {
@@ -80,7 +80,7 @@ export default function CreateProposal(props) {
             {
                 setLenName(true)
             }
-            if (proposalForm.proposalDescription.length <= 1000)
+            if (proposalForm.proposalDescription.length <= 2500)
             {
                 setLenDesc(true)
             }
@@ -99,7 +99,7 @@ export default function CreateProposal(props) {
         )
     }
 
-    function handleSubmit(event) {
+    function handleSubmit(event) { 
         event.preventDefault()
         console.log(proposalForm)
 
@@ -184,7 +184,7 @@ export default function CreateProposal(props) {
                             value={proposalForm.proposalDescription}
                             onChange={updateValues}
                             style = {(submittedEmpty.includes("proposalDescription")) ? styles : null}
-                            className="job-desc"
+                            className="proposal_desc"
                         />
                     </fieldset>
                     {
@@ -196,7 +196,7 @@ export default function CreateProposal(props) {
                     {
                         (!lenDesc) &&
                         <div>
-                            <span style={{color: "red"}}>Proposal Description field has more than 1000 characters!</span>
+                            <span style={{color: "red"}}>Proposal Description field has more than 2500 characters!</span>
                         </div>
                     }
                     {

@@ -29,7 +29,10 @@ export default function JobsWithProposals(props) {
         {
             !showProposals ?
             <div className="alljobs">
-                <h2 className="component-heading">Jobs With Proposals</h2>  
+                <div className="title-header">
+                    <h2 className="component-heading">Jobs With Proposals</h2>  
+                    <button className="job-button">Search</button>
+                </div>
                 {
                     props.jobs && props.jobs.map((job) => {
                         return(

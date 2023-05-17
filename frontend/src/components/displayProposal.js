@@ -11,11 +11,13 @@ export default function DispProposal(props) {
     const createdHoursDiff = Math.ceil(createdMsDiff / (1000 * 60 * 60));
     const createdDaysDiff = Math.ceil(createdMsDiff / (1000 * 60 * 60 * 24)); 
 
+    const [newDesc, setNewDesc] = React.useState()
+
     React.useEffect(
         () => {
             if(createdDaysDiff > 1) {
                 setPosted(createdDaysDiff)
-                if (createdDaysDiff === 1)
+                if (createdDaysDiff < 2)
                 {
                     setPostedUnit("day")
                 }
@@ -25,7 +27,7 @@ export default function DispProposal(props) {
             } 
             else if (createdHoursDiff > 1) {
                 setPosted(createdHoursDiff)
-                if (createdHoursDiff === 1)
+                if (createdHoursDiff < 2)
                 {
                     setPostedUnit("hour")
                 }
@@ -37,7 +39,7 @@ export default function DispProposal(props) {
             }
             else if (createdMinDiff > 1) {
                 setPosted(createdMinDiff)
-                if (createdMinDiff === 1)
+                if (createdMinDiff < 2)
                 {
                     setPostedUnit("minute")
                 }
@@ -47,7 +49,7 @@ export default function DispProposal(props) {
             }
             else if (createdSecDiff > 0) {
                 setPosted(createdSecDiff)
-                if (createdSecDiff === 1)
+                if (createdSecDiff < 2)
                 {
                     setPostedUnit("second")
                 }
@@ -57,15 +59,21 @@ export default function DispProposal(props) {
             }
             else {
                 setPosted(createdMsDiff)
-                if (createdMsDiff === 1)
+                if (createdMsDiff < 2)
                 {
                     setPostedUnit("millisecond")
                 }
                 else {
                     setPostedUnit("milliseconds")
                 }
-            } 
-        
+            }         
+            if (props.description.length <= 100) {
+                setNewDesc(props.description)
+            } else {
+                const words = props.description.split(" ");
+                const newSentence = words.slice(0, 30).join(" ")+ "...";
+                setNewDesc(newSentence)
+            }
         }, [now]
     )
     return (
@@ -76,7 +84,7 @@ export default function DispProposal(props) {
                     <h4>Proposal Posted: {posted} {postedUnit} ago.</h4>
                 </div>
             </div>
-            <h3>{props.description}</h3>
+            <h3>{newDesc}</h3>
         </div>
     )
 }

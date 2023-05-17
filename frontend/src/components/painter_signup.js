@@ -8,6 +8,7 @@ export default function PainterSignUp(props) {
         first_name: "",
         last_name: "",
         gender: "",
+        phoneNumber: "",
         email: "",
         password: "",
         confirm_password: "",
@@ -35,6 +36,8 @@ export default function PainterSignUp(props) {
     const [lenEmail, setLenEmail] = React.useState(true)
     const [lenFName, setLenFName] = React.useState(true)
     const [lenLName, setLenLName] = React.useState(true)
+    const [lenPhone, setLenPhone] = React.useState(true)
+    const [checkPhone, setCheckPhone] = React.useState(true)
     const [correctEntry, setCorrectEntry] = React.useState(false)
 
     const styles = {
@@ -55,6 +58,9 @@ export default function PainterSignUp(props) {
         if (painterForm.gender === "") {
             empty.push("gender")
         } 
+        if (painterForm.phoneNumber === "") {
+            empty.push("phoneNumber")
+        } 
         if (painterForm.email === "") {
             empty.push("email")
         } 
@@ -69,7 +75,12 @@ export default function PainterSignUp(props) {
         } 
         setEmpty(empty)
     }
-
+    
+    function isNumeric(str) {
+        return /^\d+$/.test(str);
+    }
+    const first5 = painterForm.phoneNumber.slice(0, 5)
+    const first2 = painterForm.phoneNumber.slice(0, 2)
     function checkCred() {
         setSubmittedEmpty(emptyFields)
         if (emptyFields.length === 0)
@@ -84,7 +95,28 @@ export default function PainterSignUp(props) {
                         {
                             if (painterForm.password === painterForm.confirm_password) 
                             {
-                                setCorrectEntry(true)
+                                if (first2 === "07" || first2 === "01" || first5 === "+2547" || first5 === "+2541")
+                                {
+                                    if (((first2 === "07" || first2 === "01") && painterForm.phoneNumber.length === 10) || 
+                                    ((first5 === "+2547" || first5 === "+2541") && painterForm.phoneNumber.length === 13)) {
+                                        if (((first2 === "07" || first2 === "01") && isNumeric(painterForm.phoneNumber)) || 
+                                        ((first5 === "+2547" || first5 === "+2541") && isNumeric(painterForm.phoneNumber.slice(1,13)))
+                                        ) {
+                                            setCorrectEntry(true)
+                                        } else {
+                                            alert ("Enter a valid phone number!")
+                                            setCheckPhone(false)
+                                        }
+                                        
+                                    } else {
+                                        alert ("Enter a valid phone number!")
+                                        setLenPhone(false)
+                                    }
+
+                                } else {
+                                    alert ("Enter a valid phone number!")
+                                    setCheckPhone(false)
+                                }
                             }
                             else {
                                 alert("Passwords do not match!")
@@ -117,6 +149,7 @@ export default function PainterSignUp(props) {
 
     React.useEffect(
         () => {
+            console.log(first5, first2)
             checkEmpty()
             if (painterForm.password.length >= 8) {
                 setLenPass(true)
@@ -133,6 +166,15 @@ export default function PainterSignUp(props) {
             if (painterForm.password === painterForm.confirm_password) {
                 setCheckPass(true)
             }
+            if (((first2 === "07" || first2 === "01") && painterForm.phoneNumber.length === 10) || 
+            ((first5 === "+2547" || first5 === "+2541") && painterForm.phoneNumber.length === 13)) {
+                setLenPhone(true)
+            }
+            if (first2 === "07" || first2 === "01" || first5 === "+2547" || first5 === "+2541")
+            {
+                setCheckPhone(true)
+            }
+              
         }, [painterForm]
     )
 
@@ -154,6 +196,7 @@ export default function PainterSignUp(props) {
             first_name: "",
             last_name: "",
             gender: "",
+            phoneNumber: "",
             email: "",
             password: "",
             confirm_password: "",
@@ -172,6 +215,7 @@ export default function PainterSignUp(props) {
             first_name: painterForm.first_name,
             last_name: painterForm.last_name,
             gender: painterForm.gender,
+            phone_number: painterForm.phoneNumber,
             email: painterForm.email,
             password: painterForm.password,
             area: painterForm.area
@@ -198,10 +242,10 @@ export default function PainterSignUp(props) {
               const alerts = data.message
               alert(alerts)
               if (data.message == "Painter created successfully!") {
-                navigate("/painter/bid-jobs")
+                navigate("/login")
                 completePSignup()
                 props.switchPainter()
-                props.handleClick()
+                // props.handleClick()
               }
             })
             .catch((err) => console.log(err));
@@ -236,7 +280,7 @@ export default function PainterSignUp(props) {
                                 value = {painterForm.last_name}
                                 onChange={updateValues}
                                 className = "name"
-                                style = {(submittedEmpty.includes("last_name")) ? styles : null}
+                                style = {(submittedEmpty.includes("last_name") || !lenFName || !lenLName) ? styles : null}
                             />
                         </div>
                     </div>
@@ -305,7 +349,34 @@ export default function PainterSignUp(props) {
                         (submittedEmpty.includes("gender")) && 
                         <br/>
                     }
-                                        
+
+                    <input 
+                        id="phoneNumber" 
+                        type="phoneNumber" 
+                        placeholder="Phone Number" 
+                        name="phoneNumber" 
+                        value = {painterForm.phoneNumber}
+                        onChange={updateValues}
+                        style = {(submittedEmpty.includes("phoneNumber") || !lenPhone || !checkPhone) ? styles : null}
+                    />
+
+                    {
+                        (submittedEmpty.includes("phoneNumber")) && 
+                        <div>
+                            <span style={{color: "red"}}>Phone Number is required!</span>
+                        </div>
+                    }
+                    {
+                        (!lenPhone || !checkPhone) &&
+                        <div>
+                            <span style={{color: "red"}}>Enter valid phone number!</span>
+                        </div>
+                    }
+                    {
+                        (submittedEmpty.includes("phoneNumber") || !lenPhone || !checkPhone) && 
+                        <br/>
+                    }
+
                     <input 
                         id="email" 
                         type="email" 
@@ -313,7 +384,7 @@ export default function PainterSignUp(props) {
                         name="email" 
                         value = {painterForm.email}
                         onChange={updateValues}
-                        style = {(submittedEmpty.includes("email")) ? styles : null}
+                        style = {(submittedEmpty.includes("email") || !lenEmail) ? styles : null}
                     />
 
                     {
@@ -343,7 +414,7 @@ export default function PainterSignUp(props) {
                                 value = {painterForm.password}
                                 onChange={updateValues}
                                 className="pass-input"
-                                style = {(submittedEmpty.includes("password")) ? styles : null}
+                                style = {(submittedEmpty.includes("password") || !lenPass) ? styles : null}
                             />
                         </div>
                         <div>

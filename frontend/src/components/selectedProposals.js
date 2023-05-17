@@ -86,7 +86,7 @@ export default function SelectedProposals(props) {
         <div style={styles}>
             {
                 proposalNumber === 0 ?
-                <main className="empty-main" style={styles}>
+                <main className="empty-main">
                     <h2 className="empty-h2">You have 0 Selected Proposals.</h2>
                 </main>
                 :
@@ -94,8 +94,9 @@ export default function SelectedProposals(props) {
                 {
                     !showProposal ?                    
                     <div className="alljobs">
-                        <div className="proposal-header">
+                        <div className="title-header">
                             <h2 className="component-heading">Selected Proposals</h2>
+                            <button className="job-button">Search</button>
                         </div>
                         {
                             proposals && proposals.map((proposal) => {

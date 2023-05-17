@@ -8,7 +8,10 @@ export default function SignedContracts(props) {
     let left = props.sidebar ? "250px" : "auto"
 
     const styles = {
-        marginLeft: left
+        marginLeft: left,
+        backgroundColor: "#f1f1f1",
+        height: "100vh",
+        overflow: "auto"
     }
 
     const requestOptions = {
@@ -53,10 +56,10 @@ export default function SignedContracts(props) {
     let location = "Signed"
 
     return (
-        <div>
+        <div style={styles}>
         {
             sContractNumber === 0 ?
-            <main className="empty-main" style={styles}>
+            <main className="empty-main" >
                 <h2 className="empty-h2">You have 0 Signed Contracts.</h2>
             </main>
             :

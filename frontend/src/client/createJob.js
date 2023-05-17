@@ -9,6 +9,7 @@ export default function CreateJob(props) {
         propLocation : "",
         propType : "",
         jobType : "",
+        contractType : "",
         totalFloors : "",
         totalRooms : "",
         startDate: "",
@@ -57,6 +58,9 @@ export default function CreateJob(props) {
         if (jobForm.jobType === "") {
             empty.push("jobType")
         }
+        if (jobForm.contractType === "") {
+            empty.push("contractType")
+        }
         if (jobForm.totalFloors === "") {
             empty.push("totalFloors")
         }
@@ -81,7 +85,7 @@ export default function CreateJob(props) {
         {
             if (jobForm.jobName.length <= 100)
             {
-                if (jobForm.jobDescription.length <= 1000)
+                if (jobForm.jobDescription.length <= 3000)
                 {
                     if (jobForm.startDate >= new Date().toISOString().slice(0, 10))
                     {
@@ -104,7 +108,7 @@ export default function CreateJob(props) {
                         setCheckStart(false)
                     }
                 } else {
-                    alert("Job Description Date has to be below 1000 characters")
+                    alert("Job Description Date has to be below 3000 characters")
                     setLenDesc(false)
                 }
             } else {
@@ -124,6 +128,7 @@ export default function CreateJob(props) {
             propLocation : "",
             propType : "",
             jobType : "",
+            contractType: "",
             totalFloors : "",
             totalRooms : "",
             startDate: "",
@@ -140,7 +145,7 @@ export default function CreateJob(props) {
             {
                 setLenName(true)
             }
-            if (jobForm.jobDescription.length <= 1000)
+            if (jobForm.jobDescription.length <= 3000)
             {
                 setLenDesc(true)
             }
@@ -183,6 +188,7 @@ export default function CreateJob(props) {
                 property_location: jobForm.propLocation,
                 property_type: jobForm.propType,
                 job_type: jobForm.jobType,
+                contract_type: jobForm.contractType,
                 total_floors: jobForm.totalFloors,
                 total_rooms: jobForm.totalRooms,
                 start_date: jobForm.startDate,
@@ -205,6 +211,7 @@ export default function CreateJob(props) {
                     console.log(data)
                     const alerts = data.message
                     alert(alerts)
+                    props.jobsOff()
                     navigate("/client/my-jobs")
                     completeJobForm()
               })
@@ -269,7 +276,7 @@ export default function CreateJob(props) {
                     {
                         (!lenDesc) &&
                         <div>
-                            <span style={{color: "red"}}>Job Description field has more than 1000 characters!</span>
+                            <span style={{color: "red"}}>Job Description field has more than 2500 characters!</span>
                         </div>
                     }
                     {
@@ -379,6 +386,35 @@ export default function CreateJob(props) {
 
                     {
                         (submittedEmpty.includes("jobType")) && 
+                        <br/>
+                    }
+
+                    <fieldset
+                        style = {(submittedEmpty.includes("contractType")) ? styles : null}
+                    >
+                        <legend>Contract Type</legend>
+                        <select
+                            id = "contractType"
+                            name = "contractType"
+                            value = {jobForm.contractType}
+                            onChange={updateValues}
+                            className="area"
+                            style = {(submittedEmpty.includes("contractType")) ? styles : null}
+                        >
+                            <option value="">--Choose--</option>
+                            <option value="Labour">Labour</option>
+                            <option value="Material">Material</option>
+                        </select>
+                    </fieldset>
+                    {
+                        (submittedEmpty.includes("contractType")) && 
+                        <div>
+                            <span style={{color: "red"}}>Contract Type is required!</span>
+                        </div>
+                    }
+
+                    {
+                        (submittedEmpty.includes("contractType")) && 
                         <br/>
                     }
 

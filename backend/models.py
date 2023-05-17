@@ -2,6 +2,7 @@ from extensions import db
 from sqlalchemy.sql import func 
 from enum import Enum
 
+
 """
 class Painter:
     id: int primary key
@@ -15,8 +16,6 @@ class Painter:
     painter_created_at: time
 """
 
-
-
 class Gender(Enum):
     Male = "Male"
     Female = "Female"
@@ -29,9 +28,9 @@ class Property_Type(Enum):
     Institutional = "institutional"
 
 class Job_Type(Enum):
-    Exterior = "exterior"
-    Interior = "interior"
-    Both = "both"
+    Exterior = "Exterior"
+    Interior = "Interior"
+    Both = "Both"
 
 class Prop_Location(Enum):
     DagorettiNorth = "Dagoretti North"
@@ -53,6 +52,10 @@ class Prop_Location(Enum):
     Starehe = "Starehe"
     Westlands = "Westlands"
 
+class Contract_Type(Enum):
+    Labour = "Labour" #Labour supplied by the painter, material by Client
+    Material = "Material" #All material and labour supplied by the painter
+
 class Painter(db.Model):
     __tablename__ = "painter"
     id = db.Column(db.Integer(), primary_key= True)
@@ -62,6 +65,7 @@ class Painter(db.Model):
     email = db.Column(db.Text(), nullable = False, unique = True)
     password = db.Column(db.Text(), nullable = False)
     area = db.Column(db.Enum(Prop_Location), nullable = False)
+    phone_number = db.Column(db.String(), nullable=False)
     painter_created_at = db.Column(db.DateTime(timezone=True),
                            server_default=func.now())
     proposals = db.relationship("Proposal", backref = "painter",lazy = True)
@@ -94,6 +98,7 @@ class Client(db.Model):
     gender = db.Column(db.Enum(Gender), nullable = False)
     email = db.Column(db.Text(), nullable = False, unique = True)
     password = db.Column(db.Text(), nullable = False)
+    phone_number = db.Column(db.String(), nullable=False)
     client_created_at = db.Column(db.DateTime(timezone=True),
                            server_default=func.now())
     jobs = db.relationship("Job", backref = "client",lazy = True)
@@ -105,6 +110,8 @@ class Client(db.Model):
         db.session.add(self)
         db.session.commit()
 
+    
+
 class Job(db.Model):
     __tablename__ = "job"
     id = db.Column(db.Integer(), primary_key = True)
@@ -114,6 +121,7 @@ class Job(db.Model):
     property_location = db.Column(db.Enum(Prop_Location), nullable = False)
     property_type = db.Column(db.Enum(Property_Type), nullable = False)
     job_type = db.Column(db.Enum(Job_Type), nullable = False)
+    contract_type = db.Column(db.Enum(Contract_Type), nullable = False)
     total_floors = db.Column(db.Integer(), nullable = False)
     total_rooms = db.Column(db.Integer(), nullable = False)
     start_date = db.Column(db.Date(), nullable = False)
@@ -139,12 +147,13 @@ class Job(db.Model):
         db.session.delete(self)
         db.session.commit()
 
-    def update(self, job_name, job_description, property_location, property_type, job_type, total_floors, total_rooms, start_date, end_date, max_proposals):
+    def update(self, job_name, job_description, property_location, property_type, job_type, contract_type, total_floors, total_rooms, start_date, end_date, max_proposals):
         self.job_name = job_name
         self.job_description = job_description
         self.property_location = property_location
         self.property_type = property_type
         self.job_type = job_type
+        self.contract_type = contract_type
         self.total_floors = total_floors
         self.total_rooms = total_rooms
         self.start_date = start_date
@@ -169,7 +178,7 @@ class Proposal(db.Model):
     id = db.Column(db.Integer(), primary_key = True)
     proposal_short_code = db.Column(db.String(), nullable = False, unique = True)
     proposal_date = db.Column(db.DateTime(timezone=True),
-                           server_default=func.now())
+                           server_default=func.now("Africa/Nairobi"))
     proposal_name = db.Column(db.Text(), nullable = False)
     proposal_description = db.Column(db.Text(), nullable = False)
     proposal_selection = db.Column(db.Boolean(), default = False, nullable = False)
@@ -206,6 +215,9 @@ class Proposal(db.Model):
 class Portfolio(db.Model):
     __tablename__ = "portfolio"
     id = db.Column(db.Integer(), primary_key = True)
+    portfolio_short_code = db.Column(db.String(), nullable = False)
+    portfolio_created_at = db.Column(db.DateTime(timezone=True),
+                           server_default=func.now("Africa/Nairobi"))
     description = db.Column(db.String(), nullable = False)
     painter_id = db.Column(db.Integer(), db.ForeignKey("painter.id"))
     images = db.relationship("Img", backref = "portfolio",lazy = True)
@@ -225,7 +237,8 @@ class Portfolio(db.Model):
 class Img(db.Model):
     __tablename__ = "img"
     id = db.Column(db.Integer(), primary_key = True)
-    img = db.Column(db.Text(), unique = True, nullable=False)
+    image_short_code = db.Column(db.String(), nullable = False, unique = True)
+    img = db.Column(db.Text(), nullable=False)
     name = db.Column(db.Text(), nullable=False)
     mimetype = db.Column(db.Text(), nullable=False) #type of image; jpeg, png etc
     portfolio_id = db.Column(db.Integer(), db.ForeignKey("portfolio.id"))
@@ -241,12 +254,16 @@ class Img(db.Model):
         db.session.delete(self)
         db.session.commit()
 
-
+#Finish up
 class Contract(db.Model):
     __tablename__= "contract"
     id = db.Column(db.Integer(), primary_key = True)
     contract_short_code = db.Column(db.String(), nullable = False, unique = True)
-    payment_amount = db.Column(db.Integer(), nullable=False)
+    materials = db.Column(db.String(), nullable = True)
+    exterior_lumpsum = db.Column(db.Integer(), nullable=True)
+    interior_preparation = db.Column(db.Integer(), nullable=True)
+    interior_finishing = db.Column(db.Integer(), nullable=True)
+    total_payment_amount = db.Column(db.Integer(), nullable=False)
     client_sign = db.Column(db.Boolean(), default = False, nullable = False)
     painter_sign = db.Column(db.Boolean(), default = False, nullable = False)
     signed = db.Column(db.Boolean(), default = False, nullable = False)
@@ -268,8 +285,48 @@ class Contract(db.Model):
         self.painter_sign = painter_sign
         db.session.commit()
 
-    def client_update(self, payment_amount, client_sign):
-        self.payment_amount = payment_amount
+    def client_exterior_update(self, exterior_lumpsum, total_payment_amount, client_sign):
+        self.exterior_lumpsum = exterior_lumpsum
+        self.total_payment_amount = total_payment_amount
+        self.client_sign = client_sign
+        db.session.commit()
+
+    def client_interior_update(self, interior_preparation, interior_finishing, total_payment_amount, client_sign):
+        self.interior_preparation = interior_preparation
+        self.interior_finishing = interior_finishing
+        self.total_payment_amount = total_payment_amount
+        self.client_sign = client_sign
+        db.session.commit()
+    
+    def client_both_update(self, exterior_lumpsum, interior_preparation, interior_finishing, total_payment_amount, client_sign):
+        self.exterior_lumpsum = exterior_lumpsum
+        self.interior_preparation = interior_preparation
+        self.interior_finishing = interior_finishing
+        self.total_payment_amount = total_payment_amount
+        self.client_sign = client_sign
+        db.session.commit()
+    
+    def client_material_exterior_update(self, materials, exterior_lumpsum, total_payment_amount, client_sign):
+        self.materials = materials
+        self.exterior_lumpsum = exterior_lumpsum
+        self.total_payment_amount = total_payment_amount
+        self.client_sign = client_sign
+        db.session.commit()
+
+    def client_material_interior_update(self, materials, interior_preparation, interior_finishing, total_payment_amount, client_sign):
+        self.materials = materials
+        self.interior_preparation = interior_preparation
+        self.interior_finishing = interior_finishing
+        self.total_payment_amount = total_payment_amount
+        self.client_sign = client_sign
+        db.session.commit()
+    
+    def client_material_both_update(self, materials, exterior_lumpsum, interior_preparation, interior_finishing, total_payment_amount, client_sign):
+        self.materials = materials
+        self.exterior_lumpsum = exterior_lumpsum
+        self.interior_preparation = interior_preparation
+        self.interior_finishing = interior_finishing
+        self.total_payment_amount = total_payment_amount
         self.client_sign = client_sign
         db.session.commit()
 

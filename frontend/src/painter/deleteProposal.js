@@ -20,7 +20,7 @@ export default function DeleteProposal(props) {
                 console.log(data)
                 const alerts = data.message
                 alert(alerts)
-                navigate("/client/my-jobs")
+                navigate("/painter/bid-jobs")
                 // const reload = window.location.reload()
                 // reload()
             })

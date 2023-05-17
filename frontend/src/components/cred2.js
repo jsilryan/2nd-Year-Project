@@ -26,6 +26,8 @@ import CreateJob from "../client/createJob"
 import AllProposals from "./allProposals"
 import SignedContracts from "./signedContracts"
 import RatePainter from "../client/ratePainter"
+import PainterProfile from "../painter/painterProfile"
+import ClientProfile from "../client/clientProfile"
 
 export default function CredentialsApp2() {
     const [locality, setLocality] = React.useState(window.location.href)
@@ -42,17 +44,24 @@ export default function CredentialsApp2() {
                 setHomeNav(true)
             }
             if (!userNavig) {
-                if (locality !== "http://localhost:3000/home") {
-                    if (locality !== "http://localhost:3000/signup") {
-                        if (locality !== "http://localhost:3000/login") {
-                            if (locality !== "http://localhost:3000/client-signup") {
-                                if (locality !== "http://localhost:3000/painter-signup") {
-                                    setHomeNav(true)
-                                }
-                            }
-                        }
-                    }
-                }
+                if (
+                    locality !== "http://localhost:3000/home" || locality !== "http://localhost:3000/signup" ||
+                    locality !== "http://localhost:3000/login" || locality !== "http://localhost:3000/client-signup" ||
+                    locality !== "http://localhost:3000/painter-signup"
+                ) 
+                {
+                    setHomeNav(true)
+                }    
+            }
+            else {
+                if (
+                    locality !== "http://localhost:3000/home" || locality !== "http://localhost:3000/signup" ||
+                    locality !== "http://localhost:3000/login" || locality !== "http://localhost:3000/client-signup" ||
+                    locality !== "http://localhost:3000/painter-signup"
+                ) 
+                {
+                    setHomeNav(false)
+                }    
             }
 
         }, [locality]
@@ -126,10 +135,10 @@ export default function CredentialsApp2() {
                             <Route path="/client-signup" element = { <ClientSignup handleClick = {userNav} switchClient = {getClient} userNavig = {userNavig}/>} />
                             <Route path="/painter-signup" element = { <PainterSignUp handleClick = {userNav} switchPainter = {getPainter} userNavig = {userNavig}/>} />
                             <Route path="/login" element = { <Login handleClick = {userNav} switchClient = {getClient} switchPainter = {getPainter} userNavig = {userNavig}/>} />
-                            <Route path="/signup" element = {<SignupPage />}/>
+                            <Route path="/signup" element = {<SignupPage handleClick = {userNav} userNavig = {userNavig}/>}/>
                             <Route path="/home" element = {(!homeNav) &&<HomePage handleClick={changeNav} setNav = {homeNav}/> }/>
-                            <Route path="/painter/my-jobs/confirmed" element = {!dispMain && <ConfirmedJobs sidebar = {sidebar} getUser = {getUser}/>}/>
-                            {/* <Route path="/client/my-jobs" element = {!dispMain && <Main sidebar = {sidebar} getUser = {getUser}/>} />
+                            {/*<Route path="/painter/my-jobs/confirmed" element = {!dispMain && <ConfirmedJobs sidebar = {sidebar} getUser = {getUser}/>}/>
+                            <Route path="/client/my-jobs" element = {!dispMain && <Main sidebar = {sidebar} getUser = {getUser}/>} />
                             <Route path="/painter/bid-jobs" element = {!dispMain && <PainterMain sidebar = {sidebar} getUser = {getUser}/>} /> */}
                         </Routes>
                     </div> 
@@ -146,7 +155,6 @@ export default function CredentialsApp2() {
                             dispMain && <PainterMain sidebar = {sidebar} getUser = {getUser} />
                         }
                         <Routes>
-                            <Route path="/login" element = { <Login handleClick = {userNav} switchClient = {getClient} switchPainter = {getPainter} userNavig = {userNavig}/> } />
                             <Route path="/client/my-jobs" element = {!dispMain && !createJobs && <Main sidebar = {sidebar} getUser = {getUser} jobsOn={createJobsOn} getRatedJob = {getRatedJob}/> } />
                             <Route path="/client/my-jobs/ongoing" element = {!dispMain && <ConfirmedJobs sidebar = {sidebar} getUser = {getUser} getRatedJob = {getRatedJob}/>} />
                             <Route path="/client/my-jobs/completed" element = {!dispMain && <CompletedJobs sidebar = {sidebar} getUser = {getUser}/>} />
@@ -164,6 +172,8 @@ export default function CredentialsApp2() {
                             <Route path="/painter/my-jobs/ongoing" element = {!dispMain && <ConfirmedJobs sidebar = {sidebar} getUser = {getUser}/>}/>
                             <Route path="/painter/my-jobs/completed" element = {!dispMain && <CompletedJobs sidebar = {sidebar} getUser = {getUser}/>}/>
                             <Route path="/ratings" element = {!dispMain && <RatePainter sidebar = {sidebar} ratedJob = {ratedJob}/>} />
+                            <Route path="/painter/portfolio" element = {!dispMain && <PainterProfile sidebar = {sidebar}/>} />
+                            <Route path="/client/profile" element = {!dispMain && <ClientProfile sidebar = {sidebar}/>} />
                         </Routes>
                     </div>
                 }

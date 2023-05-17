@@ -10,16 +10,19 @@ export default function PainterSubmenu(props) {
     }
 
     return (
-        <div>
+        <div                 
+            onMouseEnter={props.item.subnav && showSubnav }
+            onMouseLeave={props.item.subnav && showSubnav }
+
+        >
             <Link
                 className="sidebar-link" to = {props.item.path} 
                 onClick={
-                    props.getPage ?
-                    props.goToLogin :
-                    props.item.subnav && showSubnav 
+                    props.getPage &&
+                    props.goToLogin 
                 }
             >
-                <div>
+                <div> 
                     {props.item.icon}
                     <label className="sidebar-label">
                         {props.item.title}
@@ -38,7 +41,10 @@ export default function PainterSubmenu(props) {
             {
                 subnav && props.item.subnav.map((item, index) => {
                     return (
-                        <Link to = {item.path} className="dropdown-link" key={index}>
+                        <Link 
+                            to = {item.path} className="dropdown-link" key={index}
+
+                        >
                             {item.icon}
                             <label className="sidebar-label">
                                 {item.title}

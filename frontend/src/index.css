@@ -359,6 +359,10 @@ input {
   border-radius: 5px;
 }
 
+/* .proposal_input {
+  width: 600px;
+} */
+
 fieldset {
   width: 100%;
   display: flex;
@@ -367,6 +371,15 @@ fieldset {
   border-radius: 5px;
   margin-bottom: 30px;
   background-color: white;
+}
+.proposal_desc {
+  width: 600px;
+  height: 350px;
+  max-width: 600px;
+  max-height: 350px;
+  border-radius: 8px;
+  font-family: 'Karla', sans-serif;
+  font-size: 15px;
 }
 .name1 {
   /* grid-column-start: 1;
@@ -475,7 +488,7 @@ button > img {
 .alljobs {
   display:flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   height: auto;
   margin: auto;
@@ -543,7 +556,7 @@ button > img {
   /* opacity:0.7; */
   background-color: rgba(128, 128, 128, 0.7);
   overflow:hidden;
-  height: 100%;
+  height: 100vh;
 }
 .side {
   display:flex;
@@ -601,7 +614,7 @@ button > img {
   justify-content: center;
   padding: 20px;
   margin: auto;
-  width:700px;
+  width:800px;
   /* position: relative; */
   margin-top: 20px;
   border-radius: 8px;
@@ -621,7 +634,7 @@ button > img {
   justify-content: center;
   padding: 20px;
   margin: auto;
-  width:700px;
+  width:800px;
   /* position: relative; */
   margin-top: 20px;
   border-radius: 8px;
@@ -636,7 +649,7 @@ button > img {
   justify-content: center;
   margin: auto;
   margin-right: 20px;
-  width:700px;
+  width:800px;
   /* position: relative; */
   border-radius: 8px;
   height: auto;
@@ -694,7 +707,7 @@ button > img {
   flex-direction: column;
   align-items:center;
   justify-content: center;
-  width:700px;
+  width:800px;
 }
 
 .job-details div {
@@ -942,7 +955,7 @@ button > img {
   justify-content: space-between;
   margin: auto;
   margin-right: 20px;
-  width:700px;
+  width:800px;
   border-bottom: 1px solid gray;
   height: auto;
 }
@@ -959,7 +972,7 @@ button > img {
 
   padding: 20px;
   margin: auto;
-  width:700px;
+  width:800px;
   /* position: relative; */
   margin-top: 20px;
   border-radius: 8px;
@@ -1040,7 +1053,7 @@ button {
 
 .job_det {
   display: grid;
-  grid-template-columns: 140px 15px auto;
+  grid-template-columns: 160px 15px auto;
   grid-template-rows: auto;
 
 }
@@ -1059,4 +1072,180 @@ button {
 
 .first-line-contract {
   margin-top: 25px;
+}
+
+.title-header {
+  display:flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin: auto;
+  width:750px;
+  height: auto;
+}
+
+.job-button {
+  margin-bottom: -20px;
+}
+
+/*Portfolio*/
+
+.add_image {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #4A4E74;
+  height: 400px;
+  width: 600px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.display_image {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #4A4E74;
+  height: 400px;
+  width: 600px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: transform 200ms ease-in-out;
+}
+.upload_display_image {
+  position: relative;
+  max-width: 600px;
+  max-height: 400px;
+  object-fit: contain;
+}
+.display_image:hover {
+  transform: scale(1.05);
+  transition: transform 200ms ease-in-out;
+  /* padding: 5px; */
+}
+
+.display_image img {
+  transition: filter 200ms ease-in-out;
+}
+
+.display_image:hover img {
+  filter: brightness(105%);
+}
+
+
+.disp_image {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 600px;
+  width: 600px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.disp_image_opaque {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 600px;
+  width: 600px;
+  cursor: pointer;
+  border-radius: 5px;
+  /* background-color: rgba(128, 128, 128, 0.7); */
+}
+
+.input-fields {
+  border: none;
+  padding: 10px;
+  width: 100%;
+  margin-bottom: 0px;
+  margin-left: 350px;
+}
+
+.upload_image {
+  position: relative;
+  max-width: 600px;
+  max-height: 400px;
+  object-fit: contain;
+}
+
+.upload_image_opaque {
+  position: relative;
+  max-width: 600px;
+  max-height: 400px;
+  object-fit: contain;
+}
+
+.upload_image_opaque img {
+  filter: grayscale(50%); 
+  opacity: 0.8; 
+}
+
+.browse {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.browse-uploaded {
+  margin: 10px 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 20px;
+  border-radius: 5px;
+  background-color: #e9f0ff;
+}
+
+.delete_uploaded {
+  cursor: pointer;
+}
+.img_display {
+  cursor: pointer;
+  transition: transform 200ms ease-in-out;
+}
+
+.img_display:hover {
+  transform: scale(1.05);
+  color: rgb(8, 116, 146);
+  transition: transform 200ms ease-in-out;
+}
+
+.port-h4{
+  font-weight:normal;
+}
+
+.portfolio-desc {
+  width: 600px;
+  height: 450px;
+  max-width: 600px;
+  max-height: 450px;
+  border-radius: 8px;
+  font-family: 'Karla', sans-serif;
+  font-size: 15px;
+}
+
+.image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(128, 128, 128, 1); /* Change the overlay color if needed */
+  mix-blend-mode: multiply;
+}
+
+.arrow {
+  transition: transform 200ms ease-in-out;
+}
+
+.arrow:hover {
+  color: #2d2f46;
+  transform: scale(1.2);
 }

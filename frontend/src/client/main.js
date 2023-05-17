@@ -16,7 +16,10 @@ export default function Main(props) {
         }
     }
     const styles = {
-        marginLeft: left
+        marginLeft: left,
+        backgroundColor: "#f1f1f1",
+        height: "100vh",
+        overflow: "auto"
     }
     const navigate = useNavigate() 
 
@@ -58,10 +61,10 @@ export default function Main(props) {
     console.log(jobNumber)
 
     return (
-        <div>
+        <div style={styles}>
             {
                 jobNumber === 0 ?
-                <main className="empty-main" style={styles}>
+                <main className="empty-main" >
                     <h2 className="empty-h2">You have not registered any job.</h2>
                     <Link to="/client/create-job"><button className="empty-button" onClick={props.jobsOn}>Register one now</button></Link>
                 </main>

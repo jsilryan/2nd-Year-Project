@@ -1,11 +1,13 @@
 from flask import Flask, request, jsonify, make_response
 from flask_restx import Namespace, Resource, fields
-from models import Job, Painter, Proposal, Client
+from models import Job, Painter, Proposal, Client, Contract
 from flask_jwt_extended import (JWTManager, create_access_token, 
 create_refresh_token, jwt_required, get_jwt_identity
 )
 from datetime import datetime
 import random
+import requests
+import pytz
 
 proposal_ns = Namespace("proposal", description = "Painter Proposal to a job")
 
@@ -73,11 +75,38 @@ class Painter_Proposals(Resource):
                         "message" : f"Cannot create a proposal for Job {job_short_code} since it has a Confirmed Proposal."
                     }))
                     return response
-                
+
+        #Get job created at
+        ip_address = request.remote_addr
+        latitude = data.get('lat')
+        longitude = data.get('long')
+
+        if latitude and longitude:
+            # get the user's timezone based on their GPS coordinates
+            timezone_response = requests.get(f'https://maps.googleapis.com/maps/api/timezone/json?location={latitude},{longitude}&timestamp={int(datetime.now().timestamp())}&key=AIzaSyCVgCH0d4vmVmtmRRD1PdTlkDYFBndKJcg')
+            timezone_data = timezone_response.json()
+            timezone_name = timezone_data['timeZoneId']
+        elif ip_address:
+            # get the user's location based on their IP address
+            response = requests.get(f'https://ipapi.co/{ip_address}/json/')
+            location = response.json()
+            try:
+                timezone_name = location['timezone']
+            except:
+                timezone_name = 'Africa/Nairobi'
+        else:
+            # use a default timezone if location information is not available
+            timezone_name = 'Africa/Nairobi'
+        # set the timezone for the current datetime object
+        local_tz = pytz.timezone(timezone_name)
+
+        # set the client_created_at column with the current datetime object in the user's local timezone
+        proposal_date=datetime.now(local_tz)
         new_proposal = Proposal (
             proposal_short_code = code,
             proposal_name = data.get("proposal_name"),
             proposal_description = data.get("proposal_description"),
+            proposal_date = proposal_date,
             job_id = job.id,
             painter_id = current_painter.id
         )
@@ -218,6 +247,15 @@ class Modify_Proposal(Resource):
                         }))
                 else:
                     if proposal_update.proposal_confirmed != True:
+                        contracts = Contract.query.all()
+                        created_contract = []
+                        for x in range(0, len(contracts)):
+                            if (contracts[x].job_id == proposal_update.job_id):
+                                response = make_response(jsonify({
+                                    "message" : "Cannot deselect a proposal that you have created a contract for!"
+                                }))
+                                return response
+
                         proposal_update.client_update(selection)
                         response = make_response(jsonify({
                             "message": "Proposal has been deselected."
