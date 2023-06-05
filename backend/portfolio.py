@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, make_response
 from flask_restx import Namespace, Resource, fields
-from models import Job, Painter, Proposal, Client, Portfolio
+from models import Job, Painter, Proposal, Client, Portfolio, Rating
 from flask_jwt_extended import (JWTManager, create_access_token, 
 create_refresh_token, jwt_required, get_jwt_identity
 )
@@ -91,6 +91,72 @@ class Painter_Portfolio(Resource):
             response = []
             return response
 
+    @jwt_required()
+    def put(self):
+        """Update Portfolio"""
+        email = get_jwt_identity()
+        current_painter = Painter.query.filter_by(email = email).first()
+        if current_painter is None:
+            response = make_response(jsonify({
+                "message" : f"Painter does not exist!"
+            }))
+            return response
+        painter_portfolio = []
+        portfolios = Portfolio.query.all()
+        for x in range(0, len(portfolios)):
+            if (portfolios[x].painter_id == current_painter.id):
+                painter_portfolio.append(portfolios[x])
+        
+        if len(painter_portfolio) == 0:
+            response = make_response(jsonify({
+                "message" : f"Painter does not have a portfolio!"
+            }))
+            return response
+
+        data = request.get_json()
+        painter_portfolio[0].portfolio_update(
+            data.get("description")
+        )
+        response = make_response(jsonify({
+            "message" : "Portfolio Updated!"
+        }))
+        return response
+
+    @jwt_required()
+    def delete(self):
+        """Delete Portfolio"""
+        email = get_jwt_identity()
+        current_painter = Painter.query.filter_by(email = email).first()
+        if current_painter is None:
+            response = make_response(jsonify({
+                "message" : f"Painter does not exist!"
+            }))
+            return response
+        painter_portfolio = []
+        portfolios = Portfolio.query.all()
+        for x in range(0, len(portfolios)):
+            if (portfolios[x].painter_id == current_painter.id):
+                painter_portfolio.append(portfolios[x])
+        
+        if len(painter_portfolio) == 0:
+            response = make_response(jsonify({
+                "message" : f"Painter does not have a portfolio!"
+            }))
+            return response
+
+        db_images = Img.query.all()
+        portfolio_images = []
+
+        for x in range(0, len(db_images)):
+            if (db_images[x].portfolio_id == painter_portfolio[0].id):
+                db_images[x].delete()
+        
+        painter_portfolio[0].delete()
+
+        response = make_response(jsonify({
+            "message" : f"Portfolio {painter_portfolio[0].portfolio_short_code} deleted."
+        }))
+        return response
 
 @portfolio_ns.route("/client/proposal/<string:proposal_short_code>/painter/portfolio")
 class Painter_Portfolio(Resource):           

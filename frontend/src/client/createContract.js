@@ -24,6 +24,8 @@ export default function CreateContract(props) {
     const [emptyFields, setEmpty] = React.useState([])
     const [submittedEmpty, setSubmittedEmpty] = React.useState([])
     const [correctEntry, setCorrectEntry] = React.useState(false)
+    const [disabled, setDisabled] = React.useState(false)
+
     const now = new Date()
 
     const jobRequestOptions = {
@@ -167,6 +169,7 @@ export default function CreateContract(props) {
         console.log(contractForm)
 
         if (correctEntry) {
+            setDisabled(true)
             const body = {
                 materials : contractForm.materials,
                 exterior_lumpsum : contractForm.exteriorLumpsum,
@@ -358,7 +361,7 @@ export default function CreateContract(props) {
                             <h4>Once both you and the Painter have signed, you can only terminate it via proper judicial action hence pay attention to detail before signing.</h4>
                         </div>
                         <div className="submit">
-                            <button className="home-link2" onClick={checkCred}>Submit</button>
+                            <button className="home-link2" onClick={checkCred} disabled = {disabled}>Submit</button>
                         </div>
                     </form>
                 </div>

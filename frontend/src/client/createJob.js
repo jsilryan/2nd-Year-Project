@@ -29,6 +29,7 @@ export default function CreateJob(props) {
     const [emptyFields, setEmpty] = React.useState([])
     const [submittedEmpty, setSubmittedEmpty] = React.useState([])
     const [correctEntry, setCorrectEntry] = React.useState(false)
+    const [disabled, setDisabled] = React.useState(false)
     const [lenName, setLenName] = React.useState(true)
     const [lenDesc, setLenDesc] = React.useState(true)
     const [checkStart, setCheckStart] = React.useState(true)
@@ -182,6 +183,7 @@ export default function CreateJob(props) {
         console.log(jobForm)
 
         if (correctEntry) {
+            setDisabled(true)
             const body = {
                 job_name: jobForm.jobName,
                 job_description: jobForm.jobDescription,
@@ -295,7 +297,7 @@ export default function CreateJob(props) {
                             onChange={updateValues}
                             style = {(submittedEmpty.includes("propLocation")) ? styles : null}
                         >
-                            <option value="">--Choose--</option>
+                            <option value="" selected disabled>--Choose--</option>
                             <option value="DagorettiNorth">Dagoretti North</option>
                             <option value="DagorettiSouth">Dagoretti South</option>
                             <option value="EmbakasiCentral">Embakasi Central</option>
@@ -371,7 +373,7 @@ export default function CreateJob(props) {
                             className="area"
                             style = {(submittedEmpty.includes("jobType")) ? styles : null}
                         >
-                            <option value="">--Choose--</option>
+                            <option value="" selected disabled>--Choose--</option>
                             <option value="Exterior">Exterior</option>'
                             <option value="Interior">Interior</option>'
                             <option value="Both">Both</option>'
@@ -401,9 +403,9 @@ export default function CreateJob(props) {
                             className="area"
                             style = {(submittedEmpty.includes("contractType")) ? styles : null}
                         >
-                            <option value="">--Choose--</option>
+                            <option value="" selected disabled>--Choose--</option>
                             <option value="Labour">Labour</option>
-                            <option value="Material">Material</option>
+                            <option value="Material">Material and Labour</option>
                         </select>
                     </fieldset>
                     {
@@ -536,7 +538,7 @@ export default function CreateJob(props) {
                     }
                 
                     <div className="submit">
-                        <button className="home-link2" onClick={checkCred}>Submit</button>
+                        <button className="home-link2" onClick={checkCred} disabled = {disabled}>Submit</button>
                     </div>
                 </form>
             </div>

@@ -14,6 +14,8 @@ export default function AddImage(props){
     const navigate = useNavigate()
     const [checkFileType, setCheckFileType] = React.useState(true)
     const [checkFileNumber, setCheckFileNumber] = React.useState(true)
+    const [disabled, setDisabled] = React.useState(false)
+    
     const maxNum = 10 - props.numImages
     console.log(maxNum)
 
@@ -145,6 +147,7 @@ export default function AddImage(props){
         let alerts
         
         if (correctEntry) {
+            setDisabled(true)
             const formData = new FormData()
             console.log(sendImages)
             if (sendImages.length > 0) {
@@ -238,7 +241,7 @@ export default function AddImage(props){
                         }
                         
                         <div className="submit">
-                            <button className="home-link2" onClick={checkCred}>Submit</button>
+                            <button className="home-link2" onClick={checkCred} disabled = {disabled}>Submit</button>
                         </div>
                     </form>
                     {

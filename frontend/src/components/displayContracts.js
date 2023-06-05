@@ -15,7 +15,7 @@ export default function DisplayContracts(props) {
 
     return (
         <div className='jobs_display' onClick={props.handleClick}>
-            <h2>Contract for Job {props.jsc}</h2>
+            <h2>Contract {props.csc} for Job {props.jsc}</h2>
             <h3>Status: {status}</h3>
         </div>
     )

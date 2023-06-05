@@ -1,14 +1,12 @@
 import React from "react";
 import DisplayContracts from "./displayContracts";
 import SpecificContract from "./specificContract";
+import SearchBar from "./searchbar";
 
 export default function AllContracts(props) {
     let left = props.sidebar ? "250px" : "auto"
     const styles = {
-        marginLeft: left,
-        backgroundColor: "#f1f1f1",
-        height: "100vh",
-        overflow: "auto"
+        marginLeft: left
     }
 
     const [showContract, setShowContract] = React.useState(false)
@@ -34,6 +32,10 @@ export default function AllContracts(props) {
 
     const location = "contracts"
 
+    const [filteredData, setFilteredData] = React.useState()
+    const [searchWord, setSearchWord] = React.useState("")
+    console.log(searchWord, filteredData)
+
     return (
         <div style={styles} >
         {
@@ -42,32 +44,80 @@ export default function AllContracts(props) {
             <div className="alljobs">
                 <div className="title-header">
                     <h2 className="component-heading">Your Pending Contracts</h2>
-                    <button className="job-button">Search</button>
+                    <SearchBar placeholder = "Search Contracts" 
+                                data = {props.pendingContracts}
+                                setData = {setFilteredData}
+                                setSearchWord = {setSearchWord}
+                                searchWord = {searchWord}
+                                type = "contracts"
+                            />
                 </div>
                 {
+                    !searchWord ?
                     props.pendingContracts && props.pendingContracts.map((contract) => {
                         return(
-                            <DisplayContracts amount = {contract.payment_amount} signed = {contract.signed} jsc = {contract.job_short_code}
+                            <DisplayContracts amount = {contract.payment_amount} signed = {contract.signed} jsc = {contract.job_short_code} csc = {contract.contract_short_code}
                                 handleClick = {() => dispContract(contract.contract_short_code)}
                             />
                         )
                     })
+                    :
+                    <div className="searchjobs">
+                    {
+                        filteredData && filteredData.length > 0 ?
+                        filteredData.map((contract) => {
+                            return(
+                                <DisplayContracts amount = {contract.payment_amount} signed = {contract.signed} jsc = {contract.job_short_code} csc = {contract.contract_short_code}
+                                    handleClick = {() => dispContract(contract.contract_short_code)}
+                                />
+                            )
+                        })
+                        :
+                        <main className='jobs_display'>
+                            <h2 className="empty-h2">Contract does not exist.</h2>
+                        </main>
+                    }
+                    </div>
                 }
             </div>
             :
             <div className="alljobs">
                 <div className="title-header">
                     <h2 className="component-heading">Your Signed Contracts</h2>
-                    <button className="job-button">Search</button>
+                    <SearchBar placeholder = "Search Contracts" 
+                                data = {props.signedContracts}
+                                setData = {setFilteredData}
+                                setSearchWord = {setSearchWord}
+                                searchWord = {searchWord}
+                                type = "contracts"
+                            />
                 </div>
                 {
+                    !searchWord ?
                     props.signedContracts && props.signedContracts.map((contract) => {
                         return(
-                            <DisplayContracts amount = {contract.payment_amount} signed = {contract.signed} jsc = {contract.job_short_code}
+                            <DisplayContracts amount = {contract.payment_amount} signed = {contract.signed} jsc = {contract.job_short_code} csc = {contract.contract_short_code}
                                 handleClick = {() => dispContract(contract.contract_short_code)}
                             />
                         )
                     })
+                    :
+                    <div className="searchjobs">
+                    {
+                        filteredData && filteredData.length > 0 ?
+                        filteredData.map((contract) => {
+                            return(
+                                <DisplayContracts amount = {contract.payment_amount} signed = {contract.signed} jsc = {contract.job_short_code} csc = {contract.contract_short_code}
+                                    handleClick = {() => dispContract(contract.contract_short_code)}
+                                />
+                            )
+                        })
+                        :
+                        <main className='jobs_display'>
+                            <h2 className="empty-h2">Contract does not exist.</h2>
+                        </main>
+                    }
+                    </div>
                 }
             </div>
             :

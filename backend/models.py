@@ -54,7 +54,7 @@ class Prop_Location(Enum):
 
 class Contract_Type(Enum):
     Labour = "Labour" #Labour supplied by the painter, material by Client
-    Material = "Material" #All material and labour supplied by the painter
+    Material = "Labour and Material" #All material and labour supplied by the painter
 
 class Painter(db.Model):
     __tablename__ = "painter"
@@ -231,6 +231,10 @@ class Portfolio(db.Model):
 
     def delete(self):
         db.session.delete(self)
+        db.session.commit()
+
+    def portfolio_update(self, description):
+        self.description = description
         db.session.commit()
 
 

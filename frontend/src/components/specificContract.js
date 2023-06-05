@@ -263,6 +263,19 @@ export default function SpecificContract (props) {
                             </div>
                         }
                     </div>
+                    {
+                        signed && 
+                        <div>
+                            <div className="header">
+                                <h3>Signatures:</h3>
+                            </div>
+                            <div className="job_interior" >
+                                <p className="job_det"><span className="font-bold">Client:</span> <span className="real_info">_______________________</span> </p>
+                                <p className="job_det"><span className="font-bold">Painter:</span> <span className="real_info">_______________________</span> </p>
+                                <p className="job_det"><span className="font-bold">Magistrate:</span> <span className="real_info">_______________________</span> </p>
+                            </div>
+                        </div>
+                    }
                 </div>
                 {
                 !signed ?

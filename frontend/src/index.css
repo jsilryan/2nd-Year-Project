@@ -1066,8 +1066,8 @@ button {
 }
 
 .component-ref{
-  margin-right: 3%;
-  margin-top: 2%;
+  margin-right: 10%;
+  margin-top: 3%;
 }
 
 .first-line-contract {
@@ -1114,6 +1114,18 @@ button {
   border-radius: 5px;
   transition: transform 200ms ease-in-out;
 }
+.display_image_opaque {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  width: 600px;
+  cursor: pointer;
+  border-radius: 5px;
+  /* background-color: rgba(128, 128, 128, 0.7); */
+}
+
 .upload_display_image {
   position: relative;
   max-width: 600px;
@@ -1249,3 +1261,113 @@ button {
   color: #2d2f46;
   transform: scale(1.2);
 }
+
+.alljobs-header {
+  font-weight: normal;
+  border-bottom: 1px solid gray;
+  margin-bottom: -10px;
+  cursor: pointer;
+  transition: transform 200ms ease-in-out;
+}
+
+.alljobs-header:hover {
+  color: rgb(8, 116, 146);
+  transform: scale(1.2);
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: auto;
+  width:750px;
+  height: auto;
+  justify-content: space-between;
+}
+
+.yourjobs-header {
+  display:flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin: auto;
+  width:750px;
+  height: auto;
+  margin-bottom: 8px;
+  margin-top: 3px;
+}
+
+/*Search*/
+
+.search {
+
+}
+
+.searchInputs {
+  padding: 10px;
+  position: relative;
+  width: 100%;
+  height: 15px;
+  margin-bottom: -35px;
+  border: 1px solid gray;
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+  border-right: 0px;
+}
+
+.searchbox {
+  margin-bottom: -35px;
+  display: flex;
+}
+
+.searchicon {
+  height: 35px;
+  width: 50px;
+  background-color: white;
+  border: 1px solid gray;
+  display: grid;
+  place-items: center;
+  border-left: 0px;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+.searchInputs:focus {
+  outline: none;
+}
+
+.searchIcon svg {
+  font-size: 35px;
+}
+
+.dataResult {
+  margin-top: 5px;
+  width: 300px;
+  height: 200px;
+  background-color: white;
+  box-shadow: rgba(0,0,0,0.35) 0px 5px 15px;
+  overflow: hidden;
+  overflow-y: auto;
+}
+
+.dataResult .dataItem {
+  width: 100px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  color:black
+}
+
+.clearBtn {
+  cursor: pointer;
+}
+
+.searchjobs {
+  display:flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  height: auto;
+  margin: auto;
+}
+

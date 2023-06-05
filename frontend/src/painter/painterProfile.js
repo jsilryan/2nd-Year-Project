@@ -2,6 +2,8 @@ import React from "react";
 import * as AiIcons from "react-icons/ai"
 import AddImage from "./images";
 import Portfolio from "./painterPortfolio";
+import Earnings from "./earnings";
+import Ratings from "./painterRatings";
 
 export default function PainterProfile (props) {
     let left = props.sidebar ? "250px" : "auto"
@@ -61,6 +63,88 @@ export default function PainterProfile (props) {
     }
     let code = painterPortfolio && painterPortfolio.portfolio_short_code
 
+    const [signedContracts, setSignedContracts] = React.useState([])
+    const [avgRating, setAvgRating] = React.useState()
+    const [totalAmount, setTotalAmount] = React.useState()
+    const [ratings, setRatings] = React.useState()
+    const [contractNumber, setContractNumber] = React.useState()
+    let message
+    React.useEffect(
+        () => {
+            fetch("/contract/signed", requestOptions)
+                .then(res => res.json())
+                .then(data => {
+                    console.log(data)
+                    console.log(data.length)
+                    data && setContractNumber(data.length)
+                    if (data.msg){
+                        message = data.msg
+                    }
+                    setSignedContracts(data)
+                    let total = 0
+                    for (let i = 0; i < data.length; i++){
+                        let amount = data[i].total_payment_amount
+                        total = total + amount
+                    }
+                    setTotalAmount(total)
+                })
+                .catch(err => console.log(err))
+
+        }, []
+    )
+
+    React.useEffect(
+        () => {
+            // contractNumber > 0 &&
+            fetch('/rating/painter/ratings', requestOptions)
+                .then(res => res.json())
+                .then(data => {
+                    console.log(data.length)
+                    if (data.msg){
+                        message = data.msg
+                    }
+                    setRatings(data)
+                    let totalRating = 0
+                    let newAvgRating 
+                    for (let i = 0; i < data.length; i++) {
+                        totalRating = totalRating + data[i].rating_no
+                    }
+                    newAvgRating = totalRating / data.length
+                    setAvgRating(newAvgRating)
+                })
+                .catch(err => console.log(err))
+
+            
+        }, []
+    )
+
+    console.log(totalAmount)
+    console.log(ratings)
+
+    const [checkAmount, setAmount] = React.useState(false)
+
+    function openAmount() {
+        setAmount(true)
+    }
+
+    function closeAmount (){
+        setAmount(false)
+    }
+
+    const [rate, setRate] = React.useState(false)
+
+    
+    React.useEffect(() => {
+        console.log("Rate state:", rate);
+    }, [rate]);
+
+    function openRate() {
+        setRate(true);
+    }
+    function closeRate() {
+        setRate(false)
+    }
+
     return (
         // <div style={styles}>
         //         <main className="empty-main">
@@ -69,11 +153,17 @@ export default function PainterProfile (props) {
         // </div>
         <div style={styles}>
             {
-            !openPortfolio ?
+            !openPortfolio && !checkAmount && !rate ?
             <div className="job">
                 <div className="side">
                     <div className="delete">
                         <button onClick={switchPortfolio} className="home-link2">Your Portfolio</button>
+                    </div>
+                    <div className="delete">
+                        <button onClick = {openAmount} className="home-link2">Your Earnings</button>
+                    </div>
+                    <div className="delete">
+                        <button onClick={openRate} className="home-link2">Your Ratings</button>
                     </div>
                 </div>
                 <div className="job_display">
@@ -111,7 +201,23 @@ export default function PainterProfile (props) {
                 </div>
             </div>
             :
-            <Portfolio switchPortfolio = {switchPortfolio}/>
+            <div>
+            {
+                openPortfolio &&
+                <Portfolio switchPortfolio = {switchPortfolio} avgRating = {avgRating}/>
+            }
+            {
+                checkAmount &&
+                <div>
+                    <Earnings handleClick = {closeAmount} contracts = {signedContracts}/>
+                    
+                </div>
+            }
+            {
+                rate &&
+                <Ratings handleClick = {closeRate} ratings = {ratings}/>
+            }
+            </div>
             }
 
         </div>

@@ -22,6 +22,7 @@ export default function CreateProposal(props) {
     const [correctEntry, setCorrectEntry] = React.useState(false)
     const [lenName, setLenName] = React.useState(true)
     const [lenDesc, setLenDesc] = React.useState(true)
+    const [disabled, setDisabled] = React.useState(false)
 
     const styles = {
         border : "1px",
@@ -104,6 +105,7 @@ export default function CreateProposal(props) {
         console.log(proposalForm)
 
         if (correctEntry) {
+            setDisabled(true)
             const body = {
                 proposal_name: proposalForm.proposalName,
                 proposal_description: proposalForm.proposalDescription
@@ -205,7 +207,7 @@ export default function CreateProposal(props) {
                     }
                 
                     <div className="submit">
-                        <button className="home-link2" onClick={checkCred}>Submit</button>
+                        <button className="home-link2" onClick={checkCred} disabled = {disabled}>Submit</button>
                     </div>
                 </form>
             </div>

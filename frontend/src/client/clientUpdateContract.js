@@ -26,6 +26,8 @@ export default function ClientUpdateContract(props) {
     const [emptyFields, setEmpty] = React.useState([])
     const [submittedEmpty, setSubmittedEmpty] = React.useState([])
     const [correctEntry, setCorrectEntry] = React.useState(false)
+    const [disabled, setDisabled] = React.useState(false)
+
     const now = new Date()
     const contractRequestOptions = {
         method : "GET",
@@ -188,6 +190,7 @@ export default function ClientUpdateContract(props) {
         console.log(contractForm)
 
         if (correctEntry) {
+            setDisabled(true)
             const body = {
                 payment_amount: contractForm.paymentAmount,
                 client_sign: contractForm.clientSign
@@ -370,7 +373,7 @@ export default function ClientUpdateContract(props) {
                             <label htmlFor="clientSign">Yes, I agree</label>
                         </fieldset>
                         <div className="submit">
-                            <button className="home-link2" onClick={checkCred}>Submit</button>
+                            <button className="home-link2" onClick={checkCred} disabled = {disabled}>Submit</button>
                         </div>
                     </form>
                 </div>

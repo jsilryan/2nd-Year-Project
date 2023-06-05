@@ -22,12 +22,13 @@ export default function DisplayImage(props) {
     //   const imageUrl = `data:${type};base64,${imageData}`;
     const imageUrl = "http://127.0.0.1:5000/static/uploads/" + props.image.name 
 
-
+    const imgDisplay = !props.onDelete  ? "display_image" : "display_image_opaque"
+    const uploadDisplay = !props.onDelete  ? "upload_display_image" : "upload_image_opaque"
 
     return (
       <div onClick={props.handleClick} >
-        <div className="display_image" key = {props.key} >
-          <img src={imageUrl} className="upload_display_image" alt={name} />
+        <div className={imgDisplay} key = {props.key} >
+          <img src={imageUrl} className={uploadDisplay} alt={name} />
         </div>
         <br />
       </div>

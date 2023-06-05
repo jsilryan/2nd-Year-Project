@@ -24,6 +24,9 @@ export default function PainterSidebar(props) {
                     <FaIcons.FaBars className="fa" style = {styles} onClick={props.handleClick}/>
                 </navicon>
                 <div className="sidebar-nav" style = {styles1}>
+                    <div className = "user-image">
+                        <img />
+                    </div>
                     <wrap className="wrap">
                         <navicon to="">
                             <AiIcons.AiOutlineClose className="fa" onClick={props.handleClick}/>

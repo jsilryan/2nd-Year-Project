@@ -42,28 +42,29 @@ class Painter_Signup(Resource):
         db_painter = Painter.query.filter_by(email=email).first()
         db_client = Client.query.filter_by(email=email).first()
         # get the user's IP address or GPS coordinates from the request
-        ip_address = request.remote_addr
-        latitude = data.get('lat')
-        longitude = data.get('long')
+        # ip_address = request.remote_addr
+        # latitude = data.get('lat')
+        # longitude = data.get('long')
 
-        if latitude and longitude:
-            # get the user's timezone based on their GPS coordinates
-            timezone_response = requests.get(f'https://maps.googleapis.com/maps/api/timezone/json?location={latitude},{longitude}&timestamp={int(datetime.now().timestamp())}&key=AIzaSyCVgCH0d4vmVmtmRRD1PdTlkDYFBndKJcg')
-            timezone_data = timezone_response.json()
-            timezone_name = timezone_data['timeZoneId']
-        elif ip_address:
-            # get the user's location based on their IP address
-            response = requests.get(f'https://ipapi.co/{ip_address}/json/')
-            location = response.json()
-            try:
-                timezone_name = location['timezone']
-            except:
-                timezone_name = 'Africa/Nairobi'
-        else:
-            # use a default timezone if location information is not available
-            timezone_name = 'Africa/Nairobi'
+        # if latitude and longitude:
+        #     # get the user's timezone based on their GPS coordinates
+        #     timezone_response = requests.get(f'https://maps.googleapis.com/maps/api/timezone/json?location={latitude},{longitude}&timestamp={int(datetime.now().timestamp())}&key=AIzaSyCVgCH0d4vmVmtmRRD1PdTlkDYFBndKJcg')
+        #     timezone_data = timezone_response.json()
+        #     timezone_name = timezone_data['timeZoneId']
+        # elif ip_address:
+        #     # get the user's location based on their IP address
+        #     response = requests.get(f'https://ipapi.co/{ip_address}/json/')
+        #     location = response.json()
+        #     try:
+        #         timezone_name = location['timezone']
+        #     except:
+        #         timezone_name = 'Africa/Nairobi'
+        # else:
+        #     # use a default timezone if location information is not available
+        #     timezone_name = 'Africa/Nairobi'
 
         # set the timezone for the current datetime object
+        timezone_name = 'Africa/Nairobi'
         local_tz = pytz.timezone(timezone_name)
 
         # set the client_created_at column with the current datetime object in the user's local timezone
@@ -90,7 +91,7 @@ class Painter_Signup(Resource):
 
     @painter_auth_ns.marshal_with(painter_signup)
     @painter_auth_ns.expect(painter_signup)     
-    @jwt_required()   
+    @jwt_required()    
     def get(self):
         """Get a specific painter"""
         email = get_jwt_identity()

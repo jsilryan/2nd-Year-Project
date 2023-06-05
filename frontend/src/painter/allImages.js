@@ -51,6 +51,7 @@ export default function AllImages(props) {
                     <div>
                         <DisplayImage image = {portfolioImages[props.index]} key = {portfolioImages[props.index].image_short_code} 
                         handleClick = {() => props.handleClick(portfolioImages[props.index].image_short_code)} style = {slide}
+                        onDelete = {props.onDelete}
                         />
                     </div>
                 </div>

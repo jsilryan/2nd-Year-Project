@@ -1,6 +1,7 @@
 import React from "react";
 import DispProposal from "./displayProposal";
 import SpecificProposal from "./specificProposal";
+import SearchBar from "./searchbar";
 import * as AiIcons from "react-icons/ai"
 
 export default function AllProposals(props) {
@@ -86,6 +87,8 @@ export default function AllProposals(props) {
     function showModal() {
         setOpenModal(true)
     }
+    const [filteredData, setFilteredData] = React.useState()
+    const [searchWord, setSearchWord] = React.useState("")
 
     return (
         <div style={styles}>
@@ -103,6 +106,13 @@ export default function AllProposals(props) {
                         props.user === "Client" ?
                         <div className="title-header">
                             <h2 className="component-heading">Job {code} Proposals</h2>
+                            <SearchBar placeholder = "Search Proposals" 
+                                data = {proposals}
+                                setData = {setFilteredData}
+                                setSearchWord = {setSearchWord}
+                                searchWord = {searchWord}
+                                type = "proposals"
+                            />
                             <div className="job-button">
                                 <AiIcons.AiOutlineClose className="close" onClick ={props.handleClick}/>
                             </div>
@@ -110,10 +120,17 @@ export default function AllProposals(props) {
                         :
                         <div className="title-header">
                             <h2 className="component-heading">Your Proposals</h2>
-                            <button className="job-button">Search</button>
+                            <SearchBar placeholder = "Search Proposals" 
+                                data = {proposals}
+                                setData = {setFilteredData}
+                                setSearchWord = {setSearchWord}
+                                searchWord = {searchWord}
+                                type = "proposals"
+                            />
                         </div>
                         }   
                         {
+                            !searchWord ?
                             proposals && proposals.map((proposal) => {
                                 return(
                                     <DispProposal
@@ -123,6 +140,25 @@ export default function AllProposals(props) {
                                     />
                                 )
                             })
+                            :
+                            <div className="searchjobs">
+                            {
+                                filteredData && filteredData.length > 0 ? 
+                                filteredData.slice(0, 15).map((proposal) => {
+                                    return(
+                                        <DispProposal
+                                            name={proposal.proposal_name} description={proposal.proposal_description}
+                                            proposalDate = {proposal.proposal_date} 
+                                            handleClick={() => dispProposal(proposal.proposal_short_code)} 
+                                        />
+                                    )
+                                })
+                                :
+                                <main className='jobs_display'>
+                                    <h2 className="empty-h2">Proposal does not exist.</h2>
+                                </main>
+                            }
+                            </div>
                         }
                     </div>
                     :

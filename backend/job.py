@@ -65,27 +65,28 @@ class Client_Jobs_Details(Resource):
         end_date_str = data.get("end_date")
         end_date = datetime.strptime(end_date_str, '%Y-%m-%d')
         #Get job created at
-        ip_address = request.remote_addr
-        latitude = data.get('lat')
-        longitude = data.get('long')
+        # ip_address = request.remote_addr
+        # latitude = data.get('lat')
+        # longitude = data.get('long')
 
-        if latitude and longitude:
-            # get the user's timezone based on their GPS coordinates
-            timezone_response = requests.get(f'https://maps.googleapis.com/maps/api/timezone/json?location={latitude},{longitude}&timestamp={int(datetime.now().timestamp())}&key=AIzaSyCVgCH0d4vmVmtmRRD1PdTlkDYFBndKJcg')
-            timezone_data = timezone_response.json()
-            timezone_name = timezone_data['timeZoneId']
-        elif ip_address:
-            # get the user's location based on their IP address
-            response = requests.get(f'https://ipapi.co/{ip_address}/json/')
-            location = response.json()
-            try:
-                timezone_name = location['timezone']
-            except:
-                timezone_name = 'Africa/Nairobi'
-        else:
-            # use a default timezone if location information is not available
-            timezone_name = 'Africa/Nairobi'
-        # set the timezone for the current datetime object
+        # if latitude and longitude:
+        #     # get the user's timezone based on their GPS coordinates
+        #     timezone_response = requests.get(f'https://maps.googleapis.com/maps/api/timezone/json?location={latitude},{longitude}&timestamp={int(datetime.now().timestamp())}&key=AIzaSyCVgCH0d4vmVmtmRRD1PdTlkDYFBndKJcg')
+        #     timezone_data = timezone_response.json()
+        #     timezone_name = timezone_data['timeZoneId']
+        # elif ip_address:
+        #     # get the user's location based on their IP address
+        #     response = requests.get(f'https://ipapi.co/{ip_address}/json/')
+        #     location = response.json()
+        #     try:
+        #         timezone_name = location['timezone']
+        #     except:
+        #         timezone_name = 'Africa/Nairobi'
+        # else:
+        #     # use a default timezone if location information is not available
+        #     timezone_name = 'Africa/Nairobi'
+        # # set the timezone for the current datetime object
+        timezone_name = 'Africa/Nairobi'
         local_tz = pytz.timezone(timezone_name)
 
         # set the client_created_at column with the current datetime object in the user's local timezone

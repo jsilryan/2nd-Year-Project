@@ -17,6 +17,7 @@ export default function CreatePortfolio(props) {
     const [submittedEmpty, setSubmittedEmpty] = React.useState([])
     const [correctEntry, setCorrectEntry] = React.useState(false)
     const [lenDesc, setLenDesc] = React.useState(true)
+    const [disabled, setDisabled] = React.useState(false)
 
     const [token, setToken] = React.useState(() => JSON.parse(localStorage.getItem("REACT_TOKEN_AUTH_KEY")))
 
@@ -79,6 +80,7 @@ export default function CreatePortfolio(props) {
         event.preventDefault()
 
         if (correctEntry) {
+            setDisabled(true)
             const body = {
                 description: portfolioForm.description
             }
@@ -145,7 +147,7 @@ export default function CreatePortfolio(props) {
                             <br/>
                         }
                         <div className="submit">
-                            <button className="home-link2" onClick={checkCred}>Submit</button>
+                            <button className="home-link2" onClick={checkCred} disabled = {disabled}>Submit</button>
                         </div>
                     </form>
                 </div>

@@ -97,4 +97,21 @@ class Check_All_Ratings(Resource):
 
         return painter_ratings
 
+@rating_ns.route("/painter/<int:id>/ratings")
+class Check_All_Ratings(Resource):
+    @rating_ns.marshal_list_with(rating_model)
+    @rating_ns.expect(rating_model)
+    @jwt_required()
+    def get(self, id):
+        """Get all ratings for a painter by client."""
+        email = get_jwt_identity()
+        db_client = Client.query.filter_by(email = email).first()
+        if db_client:
+            db_painter = Painter.query.get(id)
+            ratings = Rating.query.all()
+            painter_ratings = []
+            for x in range(0, len(ratings)):
+                if (db_painter.id == ratings[x].painter_id):
+                    painter_ratings.append(ratings[x])
 
+            return painter_ratings
